@@ -69,7 +69,7 @@
     </section>
     <section class="w-full {minimized ? 'items-center justify-center flex' : ''}">      
         {#if optionsOpen}
-            <OptionMenu options={options} />
+            <OptionMenu closeFunction={() => {optionsOpen = false}} options={options} />
         {/if}
         <NavButton callbackActive={true} callback={() => { optionsOpen = !optionsOpen }} icon="tabler:dots" alt_icon="" text="More" />
     </section>

@@ -49,7 +49,7 @@
     $: validContent = content.length > 0 && content.length <= 400;
 </script>
 
-<MainMenu width={43} clickOutsideFunction={closeFunction} title="New Reply">
+<MainMenu width={43} clickOutsideFunction={closeFunction} title={`Reply to ${originalPostData.expand?.user.username}`}>
     <div class="p-4 pl-6 mb-12 mt-2 flex flex-row">
         <img src={url} class="w-12 h-12 rounded-full">
         <div class="flex flex-col relative ml-3 w-full items-start justify-center text-left">

@@ -12,30 +12,26 @@
     const user = PostData.expand.user
     let postLikes: any[] = PostData.likes;
     let url;
-    let userLikesPost;
+    let userLikesPost = false;
     let commentsOpen = false;
     
-    let visualLikes = PostData.likes_amount;
-    
+    let visualLikes = PostData.likes.length
+    let repliesAmount = PostData.comments.length;
+
     async function likePost() {
-        try {
-            if ($currentUser !== null || undefined) {
-                if (!userLikesPost) {
-                    visualLikes += 1;
-                    userLikesPost = true;
-                    const post = await UserClass.posts.like(PostData.id);
-                    console.log(post);
-                } else {
-                    visualLikes -= 1;
-                    userLikesPost = false;
-                    const post = await UserClass.posts.unlike(PostData.id);
-                    console.log(post);
-                }
-            } else {
-                goto('/login');
-            }
-        } catch (error) {
-            console.error(error);
+        if (!currentUser) {
+            goto('/login');
+            return;
+        }
+
+        if (userLikesPost) {
+            visualLikes -= 1;
+            userLikesPost = false;
+            await UserClass.posts.unlike(PostData.id);
+        } else {
+            visualLikes += 1;
+            userLikesPost = true;
+            await UserClass.posts.like(PostData.id);
         }
     }
 
@@ -54,24 +50,29 @@
         }
     }
 
-    async function userLikes() {
-        if ($currentUser) {
-            const likes = await pb.collection('Likes').getList(1, 50, {
-                filter: `user = '${$currentUser.id}' && post = '${PostData.id}'`
-            });
+    async function checkUserLikesPost() {
+        if (!currentUser) return;
 
-            return likes.items.length > 0;
-        } else {
-            return false;
-        }
+        const data = await pb.collection('posts').getOne(PostData.id, {
+            expand: 'likes',
+        })
+        
+        data.likes.forEach((like) => {
+            if (like.user === currentUser.id) {
+                userLikesPost = true;
+            }
+        })
+
+
+        console.log(userLikesPost);
+        return userLikesPost
     }
 
-
-    onMount(async() => {
+    onMount(async () => {
         await fetchData();
-        userLikesPost = await userLikes();
-    })
-
+        await checkUserLikesPost();
+    });
+    
     $: time = timeAgo(PostData.created_at);
 </script>
 
@@ -99,9 +100,16 @@
             {@html PostData.content.replace(/@(\w+)/g, '<a href="/@$1" class="text-sky-600 hover:underline">@$1</a>')}
         </p>
         <div class="w-full flex items-center justify-start mt-2 gap-3">
-            <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon={userLikesPost ? 'iconamoon:heart-fill' : 'iconamoon:heart'} class="w-full h-full active:scale-[1.2] duration-100     {userLikesPost ? 'text-red-600' : 'text-black/80 dark:text-white/80'}" />
-            </button>
+            {userLikesPost}
+            {#if userLikesPost}
+                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
+                    <Icon icon='iconamoon:heart-fill' class="w-full h-full active:scale-[1.2] duration-100 text-red-600" />
+                </button>
+            {:else}
+                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
+                    <Icon icon='iconamoon:heart' class="w-full h-full active:scale-[1.2] duration-100 text-black/80 dark:text-white/80" />
+                </button>
+            {/if}
             <button on:click={() => {
                 commentsOpen = true;
             }} class="h-[1.6rem] w-[1.6rem]">
@@ -119,10 +127,7 @@
                 {visualLikes} like{visualLikes > 1 ? 's' : ''}
             </p>
             <p>
-                {PostData.replies_amount} replies{PostData.replies_amount > 1 ? 's' : ''}
-            </p>
-            <p>
-                {PostData.reposts_amount} reposts{PostData.reposts_amount > 1 ? 's' : ''}
+                {repliesAmount} replies{repliesAmount > 1 ? 's' : ''}
             </p>
         </div>
     </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import Post from "$lib/Components/Home/Post.svelte";
     import PostInput from "$lib/Components/Home/PostInput.svelte";
+    import LoadingPost from "$lib/Components/Loaders/LoadingPost.svelte";
     import { currentUser, pb } from "$lib/Pocketbase";
     import Icon from "@iconify/svelte";
     import { onDestroy, onMount } from "svelte";
@@ -13,20 +14,25 @@
 
     async function fetchPosts() {
         loading = true;
-        const records = await pb.collection('posts').getList(currentNumber, currentNumber + 15, {
-            sort: '-created_at',
-            expand: 'user'
-        })
+        try {
+            const records = await pb.collection('posts').getList(currentNumber, currentNumber + 15, {
+                sort: '-created_at',
+                expand: 'user'
+            })
 
-        const itemsToPush = [];
-        for (let i = 0; i < records.items.length; i++) {
-            itemsToPush.push(records.items[i])
+            const itemsToPush = [];
+            for (let i = 0; i < records.items.length; i++) {
+                itemsToPush.push(records.items[i])
+            }
+
+            itemsToPush.forEach((item) => {
+                posts = [...posts, item]
+            })
+        } catch (error) {
+            console.error(error);
+        } finally {
+            loading = false;
         }
-
-        itemsToPush.forEach((item) => {
-            posts = [...posts, item]
-        })
-        loading = false;
     }
 
     onMount(async() => {
@@ -58,10 +64,11 @@
 <main class="flex items-start flex-row pl-64 pt-14 justify-center w-[88%] max-2xl:w-[80%] h-screen">
     <div class="flex flex-col">
         <PostInput user={$currentUser} />
-        <div class="w-[47.5rem] fadeUp fadeUpFast h-full gap-6 flex flex-col items-center justify-start pt-4">
+        <div class="w-[47.5rem] overflow-y-auto fadeUp fadeUpFast h-full gap-6 grid grid-cols-1 grid-rows-1 items-center justify-start pt-4">
             {#if posts.length > 0 && loading === false}
                 {#each posts as  post}
                     <Post PostData={post} />
+                    <LoadingPost />
                 {/each}
             {:else if loading === true}
                 <p>
