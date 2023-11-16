@@ -2,6 +2,6 @@
     export let additionalClass = "";
 </script>
 
-<p class="{additionalClass} fadeUp fadeUpFast text-black/60 dark:text-white/50 text-lg font-medium">
+<p class="{additionalClass} text-black/60 dark:text-white/50 text-lg">
     <slot></slot>
 </p>

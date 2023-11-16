@@ -29,7 +29,7 @@ export class Posts {
     constructor() {
         this.user = pb.authStore.model as UserData;
     }
-
+    
     async create(post: any) {
         if(!post) {
             return "No post provided";
@@ -45,7 +45,6 @@ export class Posts {
     }
 
     async like(post: any) {
-        console.log(this.user.id)
         const like_record = await pb.collection('likes').create({
             'user': this.user.id,
             'post': post

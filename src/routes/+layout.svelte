@@ -7,7 +7,7 @@
     import './app.css';
     
     const minimized = $minimizedNav
-    $: pageIsntAuthentication = $page.url.pathname !== '/login' && $page.url.pathname !== '/register'
+    $: pageIsntAuthentication = $page.url.pathname !== '/login' && $page.url.pathname !== '/register' && $page.url.pathname !== '/login-beta' && $page.url.pathname !== '/register-beta'
 </script>
 
 <PostCreationMenu user={$currentUser} />

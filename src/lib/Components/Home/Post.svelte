@@ -83,7 +83,7 @@
 {/if}   
 
 <div class="w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 pb-6">
-    <p class="dark:text-white/30 text-black/50 absolute top-0 right-0">
+    <p class="dark:text-white/30 font-mono text-black/50 absolute top-0 right-0">
         {time}
     </p>
     <div class="flex flex-col w-11 gap-3 h-full">
@@ -95,12 +95,11 @@
         <a href={`/${user.username}`} class="hover:underline font-medium dark:text-white text-black text-left">
             {user.username}<br>
         </a>    
-        <span class="dark:text-white/40 text-black/70 font-normal">@{user.handle}</span>
+        <span class="dark:text-white/40 text-black/70 font-normal text-sm font-mono">@{user.handle}</span>
         <p class='mt-1 w-[44rem] dark:text-white text-black text-left whitespace-pre-wrap break-words'>
             {@html PostData.content.replace(/@(\w+)/g, '<a href="/@$1" class="text-sky-600 hover:underline">@$1</a>')}
         </p>
         <div class="w-full flex items-center justify-start mt-2 gap-3">
-            {userLikesPost}
             {#if userLikesPost}
                 <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
                     <Icon icon='iconamoon:heart-fill' class="w-full h-full active:scale-[1.2] duration-100 text-red-600" />
@@ -113,16 +112,16 @@
             <button on:click={() => {
                 commentsOpen = true;
             }} class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon="iconamoon:comment-dots-light" class="w-full h-full active:scale-[1.2] duration-100   text-black/80 dark:text-white/80" />
+                <Icon icon="ph:chat-circle-dots" class="w-full h-full active:scale-[1.2] duration-100   text-black/80 dark:text-white/80" />
             </button>
             <button class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon="iconamoon:playlist-repeat-list" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
+                <Icon icon="ph:repeat" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
             </button>
             <button class="h-[1.6rem] w-[1.6rem]">
                 <Icon icon="iconamoon:send" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
             </button>
         </div>
-        <div class="flex flex-row gap-6 mt-2 dark:text-white/40 text-black/70">
+        <div class="flex flex-row gap-6 mt-2 dark:text-white/40 font-mono text-sm text-black/70">
             <p>
                 {visualLikes} like{visualLikes > 1 ? 's' : ''}
             </p>

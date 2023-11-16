@@ -3,6 +3,6 @@
     export let callback = () => {};
 </script>
 
-<button class='{additionalClass} fadeUp fadeUpFast w-full p-2.5 hover:border-white/80 hover:bg-white duration-100 border font-medium border-white  text-black bg-white/80 rounded-xl'>
+<button on:click={callback} class='{additionalClass} w-full p-2.5  hover:bg-white/90 duration-100 border font-medium text-black bg-white rounded-lg'>
     <slot></slot>
 </button>

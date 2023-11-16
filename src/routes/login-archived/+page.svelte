@@ -31,6 +31,14 @@
             goto('/');
         }
     }
+
+    onMount(() => {
+        goto('/login');
+    })
+
+    $: {
+        goto('/login');
+    }
 </script>
 
 {#if loading}

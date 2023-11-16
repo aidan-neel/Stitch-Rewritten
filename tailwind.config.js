@@ -5,11 +5,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Open Sans', 'sans-serif'],
+        'sans': ['Inter', 'sans-serif'],
         'mono': ['Roboto Mono', 'monospace']
       }, colors: {
-        'main': '#101010',
-        'secondary': '#181818',
+        'main': '#09090b',
+        'secondary': '#111112',
         'main-white': '#e6e6e6',
         'secondary-white': '#e3e3e3',
       },

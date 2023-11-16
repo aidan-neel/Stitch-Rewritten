@@ -2,13 +2,13 @@
     import { currentUser, pb } from "$lib/Pocketbase";
     import { toast } from "$lib/Toast";
     import { user as UserClass } from "$lib/User";
-    import { postCreation } from "$lib/stores";
+    import { postCreation, postCreationContent } from "$lib/stores";
     import CreationInput from "../Typography/CreationInput.svelte";
     import MainMenu from "./MainMenu.svelte";
 
     export let user;
     
-    let content = '';
+    let content = $postCreationContent;
     let url;
 
     async function fetchData() {
@@ -70,6 +70,7 @@
 {#if $postCreation && $currentUser && user}
 <MainMenu width={43} clickOutsideFunction={() => {
     postCreation.set(false);
+    postCreationContent.set('');
 }} title="New Post">
     <div class="p-4 pl-6 mb-12 mt-2 flex flex-row">
         <img src={url} class="w-12 h-12 rounded-full">

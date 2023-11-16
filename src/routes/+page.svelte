@@ -1,7 +1,7 @@
 <script lang="ts">
     import Post from "$lib/Components/Home/Post.svelte";
     import PostInput from "$lib/Components/Home/PostInput.svelte";
-    import LoadingPost from "$lib/Components/Loaders/LoadingPost.svelte";
+    import Loading from "$lib/Components/Menus/Loading.svelte";
     import { currentUser, pb } from "$lib/Pocketbase";
     import Icon from "@iconify/svelte";
     import { onDestroy, onMount } from "svelte";
@@ -39,7 +39,7 @@
         await fetchPosts();
         pb.collection('posts').subscribe('*', async ({action, record}) => {
             if (action === 'create') {
-                posts.push(record);
+                posts = [record, ...posts]
              }
             if (action === 'delete') {
                 posts = posts.filter((post) => {
@@ -53,6 +53,10 @@
         posts = [];
         pb.collection('posts').unsubscribe('*');
     })
+
+    $: {
+        console.log(posts);
+    }
 </script>
 
 <svelte:head>
@@ -61,29 +65,49 @@
     </title>
 </svelte:head>
 
-<main class="flex items-start flex-row pl-64 pt-14 justify-center w-[88%] max-2xl:w-[80%] h-screen">
-    <div class="flex flex-col">
-        <PostInput user={$currentUser} />
-        <div class="w-[47.5rem] overflow-y-auto fadeUp fadeUpFast h-full gap-6 grid grid-cols-1 grid-rows-1 items-center justify-start pt-4">
+<style>
+    .posts-container {
+        display: grid;
+        justify-items: center; /* Centers children horizontally */
+        align-items: start;    /* Aligns children to the top */
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .hide-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+
+</style>
+
+{#if loading === true && posts.length < 0}
+    <Loading />
+{/if}
+
+<main class="flex items-start flex-row pl-64 justify-center w-[88%] max-2xl:w-[80%] h-screen">
+    <div class="flex flex-col h-full">
+        <div class="w-[47.5rem] overflow-y-auto fadeUp fadeUpFast gap-6 grid overflow-x-hidden hide-scrollbar  items-center justify-start">
+            <PostInput user={$currentUser} />
             {#if posts.length > 0 && loading === false}
-                {#each posts as  post}
+                {#each posts as post}
                     <Post PostData={post} />
-                    <LoadingPost />
                 {/each}
-            {:else if loading === true}
-                <p>
-                    Loading...
-                </p>
             {/if}
         </div>
     </div>
-    <div class="h-screen w-[22%] ml-64 justify-start flex flex-col fadeUp fadeUpFast">
-        <div class="w-full rounded-full dark:bg-white bg-black bg-opacity-5 dark:bg-opacity-[0] border dark:border-white border-black dark:border-opacity-[0.15] border-opacity-[0.15] p-1 px-2 mt-4 flex flex-row">
+    <div class="h-screen w-[22%] mt-8 ml-64 justify-start flex flex-col fadeUp fadeUpFast">
+        <div class="w-full rounded-full dark:bg-white bg-black bg-opacity-5 dark:bg-opacity-[0] border dark:border-white border-black dark:border-opacity-[0.15] border-opacity-[0.15] p-0.5 px-2 mt-4 flex flex-row">
             <Icon icon="iconamoon:search" class="w-5 h-5 dark:text-white/40 text-black/50 m-3" />
             <input type="text" placeholder="Search" class="bg-transparent dark:text-white/70 text-black/80 placeholder:text-black/60 dark:placeholder:text-white/40 w-full outline-none" />
         </div>
         <div class="flex items-start justify-between flex-row mt-8">
-            <p class="dark:text-white/40 text-black/50">
+            <p class="dark:text-white/40 text-black/50 font-mono">
                 Suggested for you
             </p>    
             <button class="dark:text-white/70 text-black/90 font-medium mr-1">
