@@ -7,7 +7,7 @@
 	import Toast from "$lib/Components/Menus/Toast.svelte";
 	import SubTitle from "$lib/Components/Typography/SubTitle.svelte";
 	import Title from "$lib/Components/Typography/Title.svelte";
-	import { imageUrlToFormData } from "$lib/Modules/utils";
+	import { imageUrlToFormData } from "$lib/Modules/Utils";
 	import { toast } from "$lib/Toast";
 	import Icon from "@iconify/svelte";
     import Loading from "$lib/Components/Misc/Loading.svelte";

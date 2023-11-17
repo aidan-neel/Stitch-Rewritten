@@ -34,7 +34,7 @@
     }); 
 </script>
 
-<div bind:this={div} bind:innerText={value} on:input={handleInput} contenteditable="true" class="whitespace-pre-wrap break-words text-left z-20 w-[35rem] focus:outline-none dark:text-white/80 text-black/80"></div>
+<div on:click|stopPropagation bind:this={div} bind:innerText={value} on:input={handleInput} contenteditable="true" class="whitespace-pre-wrap break-words text-left z-20 w-[35rem] focus:outline-none dark:text-white/80 text-black/80"></div>
 {#if content === ''}
     <p class="absolute top-6 select-none z-10 text-black/60 dark:text-white/40">
         <slot></slot>

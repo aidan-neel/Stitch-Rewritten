@@ -3,7 +3,7 @@
 	import Button from '$lib/Components/Profile/Button.svelte';
 	import VerifiedCheckmark from '$lib/Components/Tooltips/VerifiedCheckmark.svelte';
 	import { currentUser, pb } from '$lib/Pocketbase';
-	import { postCreation, postCreationContent } from '$lib/stores.js';
+	import { postCreation, postCreationContent } from '$lib/Stores.js';
 	import { onMount } from 'svelte';
 
     export let data;
@@ -18,7 +18,7 @@
         if(user_handle) {
             try {
                 loading = true;
-                    const user = await pb.collection('users').getList(1, 3, {
+                const user = await pb.collection('users').getList(1, 3, {
                     filter: `handle = "${user_handle}"`
                 });
 
@@ -80,7 +80,7 @@
                     <p class="mt-4 fadeUp">
                         {user_data.bio}
                     </p>
-                    <div class="flex flex-row mt-4 fadeUp gap-4 text-white/60 font-mono text-sm">
+                    <div class="flex flex-row mt-4 fadeUp gap-4 text-white/60 font-mono ">
                         <p>
                             {user_data.followers?.length !== undefined ? user_data.followers.length : 0} followers
                         </p>

@@ -1,5 +1,7 @@
 <script>
 	import { currentUser, pb } from "$lib/Pocketbase";
+	import { toast } from "$lib/Toast";
+	import { user as UserClass } from "$lib/User";
 	import CreationInput from "../Typography/CreationInput.svelte";
 	import MainMenu from "./MainMenu.svelte";
 
@@ -10,7 +12,24 @@
     export let closeFunction
 
     async function createComment() {
-
+        if(content !== '' && content.length <= 400 && $currentUser) {
+            try {
+                UserClass.posts.createComment({
+                    content: content,
+                    user: $currentUser.id,
+                    original_post: originalPostData.id,
+                    original_post_id: originalPostData.id,
+                    created_at: new Date().toISOString(),
+                    image: null,
+                })
+                console.log(originalPostData)
+                toast(`Successfully replied to post!`);
+                closeFunction();
+                content = '';
+            } catch (error) {
+                console.error(error);
+            }
+        }
     }
 
     async function fetchData() {
@@ -60,9 +79,9 @@
                 Reply to {originalPostData.expand?.user.username}
             </CreationInput>
         </div>
-        <button on:click={createComment} class="{validContent ? 'dark:text-sky-500 text-sky-600' : 'text-sky-800 hover:cursor-not-allowed'} duration-100 absolute bottom-6 right-6">
+        <button on:click={createComment} class="{validContent ? 'dark:text-white text-white font-mono' : 'text-white/30 hover:cursor-not-allowed'} font-mono duration-100 absolute bottom-6 right-6">
             {#if content.length >= 325}
-                <span class="dark:text-white/40 text-black/60 text-sm mr-1 {content.length >= 400 ? 'text-red-500' : ''}">{content.length}/400</span>
+                <span class="dark:text-white/40  text-black/60  mr-1 {content.length >= 400 ? 'text-red-500' : ''}">{content.length}/400</span>
             {/if}Reply
         </button>
     </div>

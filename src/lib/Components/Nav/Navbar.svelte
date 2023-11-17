@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import type { Option } from "$lib/Modules/types";
+	import type { Option } from "$lib/Modules/Types";
 	import { currentUser, pb } from "$lib/Pocketbase";
-	import { minimizedNav, postCreation } from "$lib/stores";
+	import { minimizedNav, postCreation } from "$lib/Stores";
 	import OptionMenu from "../Menus/OptionMenu.svelte";
 	import NavButton from "./NavButton.svelte";
 
@@ -54,14 +54,18 @@
     }
 </script>
 
-<nav class="h-screen fadeUpFast z-20  bg-main-white dark:bg-main duration-200 max-2xl:w-[24%] w-[14%] flex-col justify-between border-opacity-[0.075] flex items-start p-5 absolute left-0 top-0">
+<nav class="h-screen fadeUpFast z-20 hidden lg:flex bg-main-white dark:bg-main duration-200 max-2xl:w-[24%] w-[14%] flex-col justify-between border-opacity-[0.075] items-start p-5 absolute left-0 top-0">
     <p class="text-white text-3xl absolute top-10 left-8 z-20 text-left font-semibold flex items-center justify-center gap-2">
         Stitch <span class="text-base font-mono font-normal text-white/70">Beta</span>
     </p>    
     <section class="flex flex-col {minimized ? 'items-center justify-center' : 'items-start justify-start'} gap-2 w-full mt-24">
         <NavButton href="/" minimized={minimized} icon="ph:house-fill" alt_icon="" text="Home" />
         <NavButton callbackActive={true} callback={() => {
-            postCreation.set(true);
+            if($currentUser) {
+                postCreation.set(true);
+            } else {
+                goto('/login');
+            }
         }} minimized={minimized}  icon="ph:plus-circle-fill" alt_icon="" text="Create" />
         {#if $currentUser}
             <NavButton href="/@{$currentUser?.handle}" minimized={minimized}  icon="ph:user-circle-fill" alt_icon="" text="View Profile" />

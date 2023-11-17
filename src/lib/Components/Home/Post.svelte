@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { timeAgo } from "$lib/Modules/utils";
+	import { timeAgo } from "$lib/Modules/Utils";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { user as UserClass } from "$lib/User";
 	import Icon from "@iconify/svelte";
@@ -71,6 +71,7 @@
     onMount(async () => {
         await fetchData();
         await checkUserLikesPost();
+        PostData.content = PostData.content.replace(/@(\w+)/g, '<span class="text-sky-600">@$1</span>');
     });
     
     $: time = timeAgo(PostData.created_at);
@@ -82,11 +83,11 @@
     }} open={commentsOpen} originalPostData={PostData} />
 {/if}   
 
-<div class="w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 pb-6">
+    <div class="w-[92vw] md:w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 pb-6">
     <p class="dark:text-white/30 font-mono text-black/50 absolute top-0 right-0">
         {time}
     </p>
-    <div class="flex flex-col w-11 gap-3 h-full">
+    <div class="flex flex-col w-11 gap-3 h-full flex-shrink-0">
         <img on:click={() => {
             goto(`/${user.username}`)
         }} src={url} class="h-11 w-11  hover:cursor-pointer object-cover rounded-full border border-black/20 dark:border-white/10">
@@ -95,8 +96,8 @@
         <a href={`/${user.username}`} class="hover:underline font-medium dark:text-white text-black text-left">
             {user.username}<br>
         </a>    
-        <span class="dark:text-white/40 text-black/70 font-normal text-sm font-mono">@{user.handle}</span>
-        <p class='mt-1 w-[44rem] dark:text-white text-black text-left whitespace-pre-wrap break-words'>
+        <span class="dark:text-white/40 text-black/70 font-normal font-mono">@{user.handle}</span>
+        <p class='mt-1 w-[100%] dark:text-white text-black text-left whitespace-pre-wrap break-words'>
             {@html PostData.content.replace(/@(\w+)/g, '<a href="/@$1" class="text-sky-600 hover:underline">@$1</a>')}
         </p>
         <div class="w-full flex items-center justify-start mt-2 gap-3">
@@ -121,12 +122,12 @@
                 <Icon icon="iconamoon:send" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
             </button>
         </div>
-        <div class="flex flex-row gap-6 mt-2 dark:text-white/40 font-mono text-sm text-black/70">
+        <div class="flex flex-row gap-6 mt-2 dark:text-white/40 font-mono text-black/70">
             <p>
                 {visualLikes} like{visualLikes > 1 ? 's' : ''}
             </p>
             <p>
-                {repliesAmount} replies{repliesAmount > 1 ? 's' : ''}
+                {repliesAmount} replies
             </p>
         </div>
     </div>

@@ -44,6 +44,24 @@ export class Posts {
         return record;
     }
 
+    async createComment(data: any) {
+        if(!data) {
+            return "No data provided";
+        }
+        
+        const record = await pb.collection("comments").create(data);
+        const post_data = await pb.collection('posts').getOne(data.original_post, {
+            expand: 'comments'
+        })
+
+        const post_record = await pb.collection('posts').update(data.original_post, {
+            'comments+': record.id,
+            'comments_amount': post_data.comments_amount + 1,
+        })
+
+        return record;
+    }
+
     async like(post: any) {
         const like_record = await pb.collection('likes').create({
             'user': this.user.id,

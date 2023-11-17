@@ -45,7 +45,7 @@
                     </p>
                 </div>
             </div>
-            <a class="text-sm text-sky-500 fadeUp fadeUpFast">
+            <a class=" text-white fadeUp fadeUpFast">
                 View Profile
             </a>
         </div>

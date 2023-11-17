@@ -5,7 +5,7 @@
 	import Loading from "$lib/Components/Menus/Loading.svelte";
 	import SubTitle from "$lib/Components/Typography/SubTitle.svelte";
 	import Title from "$lib/Components/Typography/Title.svelte";
-	import { RegisterWithEmailAndPassword, emailTaken } from "$lib/Modules/AuthManager";
+	import { LoginWithEmailAndPassword, emailTaken } from "$lib/Modules/AuthManager";
 	import { toast } from "$lib/Toast";
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
@@ -21,9 +21,6 @@
         current_page = 1;
     })
 
-    let input1;
-    let input2;
-
     setInterval(() => {
         key++;
         if(key === textChoices.length) {
@@ -32,6 +29,9 @@
         text = textChoices[key];
     }, 3500);
 
+    let input1;
+    let input2;
+
     let loading = false;
     let email = '';
     let password = '';
@@ -39,9 +39,9 @@
 
     const complete_page_1 = async() => {
         let emailIsTaken = await emailTaken(email);
-        
-        if(emailIsTaken) {
-            toast('Email is already taken');
+
+        if(email === '') {
+            toast('Email is required');
             return;
         }
 
@@ -51,8 +51,8 @@
             return;
         }
 
-        if(email === '') {
-            toast('Email is required');
+        if(!emailIsTaken) {
+            toast('No account associated with this email');
             return;
         }
 
@@ -74,31 +74,25 @@
 
     const callbackFunctionTwo = (event) => {
         if(event.key === 'Enter') {
-            register();
+            Login();
         }
     }
-    
-    async function register() {
-        console.log(saved_email, password)
 
-        if(!saved_email || !password) {
-            toast('Email and password are required');
-            return;
-        }
-
+    async function Login() {
         loading = true;
-
-        const registered = await RegisterWithEmailAndPassword(saved_email, password);
-        if(registered.status === 'success') {
+        try {
+            await LoginWithEmailAndPassword(saved_email, password);
+        } catch(err) {
+            toast(err);
+        } finally {
+            toast('Successfully logged in');
             goto('/');
             setTimeout(() => {
                 loading = false;
             }, 500);
-        } else {
-            toast(registered.message);
         }
     }
-    
+
     onMount(() => {
         if(input1) {
             input1.focus();
@@ -123,8 +117,8 @@
     Stitch <span class="text-base font-mono font-normal text-white/70">Beta</span>
 </p>
 
-<a href="/login" class="absolute top-8 right-10 flex p-3 px-4 text-lg font-medium hover:bg-white/10 rounded-lg">
-    Login
+<a href="/register" class="absolute top-8 right-10 flex p-3 px-4 text-lg font-medium hover:bg-white/10 rounded-lg">
+    Register
 </a>
 
 <main class="h-screen w-screen flex flex-row items-center justify-start">
@@ -141,16 +135,16 @@
     <div class="w-full flex items-center justify-center flex-col">
         {#if current_page == 1}
             <div transition:fly="{{y: 30, duration: 600}}" class="md:w-[29.5rem] w-[90%] flex items-center justify-center flex-col">
-            <Title>
-                    Create an account
+                <Title>
+                    Sign in to your account
                 </Title>
                 <SubTitle additionalClass="my-2.5">
-                    Enter your email below to create your account
+                    Enter your email below to sign in to your account
                 </SubTitle>
         
-                <Input bind:this={input1} callback={callbackFunctionOne} bind:value={email} type="email" placeholder="name@example.com" additionalClass="mt-3" />
+                <Input bind:thing={input1} callback={callbackFunctionOne} bind:value={email} type="email" placeholder="name@example.com" additionalClass="mt-3" />
                 <Button callback={complete_page_1} additionalClass="mt-3 flex items-center justify-center text-center">
-                    Sign Up with Email
+                    Sign In with Email
                 </Button>
 
                 <div class="mt-10 w-full flex border-t border-t-white/20 items-center justify-center relative">
@@ -170,15 +164,15 @@
         {:else if current_page == 2}
         <div transition:fly="{{y: 30, duration: 600}}" class="md:w-[29.5rem] w-[90%] flex items-center justify-center flex-col">
             <Title>
-                    Create a password
+                    Enter your password
                 </Title>
                 <SubTitle additionalClass="my-2.5">
-                    Enter your password below to create your account
+                    Enter your password below to sign in to your account
                 </SubTitle>
         
-                <Input bind:this={input2} callback={callbackFunctionTwo} bind:value={password} type="password" placeholder="password123" additionalClass="mt-3" />
-                <Button callback={register} additionalClass="mt-3 flex items-center justify-center text-center">
-                    Complete Sign Up
+                <Input bind:thing={input2} callback={callbackFunctionTwo} bind:value={password} type="password" placeholder="password123" additionalClass="mt-3" />
+                <Button callback={Login} additionalClass="mt-3 flex items-center justify-center text-center">
+                    Complete Sign In
                 </Button>
 
                 <div class="mt-10 w-full flex border-t border-t-white/20 items-center justify-center relative">
