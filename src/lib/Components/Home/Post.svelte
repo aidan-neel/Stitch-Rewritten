@@ -6,20 +6,50 @@
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
 	import CommentCreationMenu from "../Menus/CommentCreationMenu.svelte";
+	import UrlEmbed from "../Menus/UrlEmbed.svelte";
     export let PostData;
+    export let additionalClasses = '';
 
 
     const user = PostData.expand.user
     let postLikes: any[] = PostData.likes;
     let url;
+    let urls;
     let userLikesPost = false;
     let commentsOpen = false;
-    
+
+    PostData.formatted = false;
+
     let visualLikes = PostData.likes.length
     let repliesAmount = PostData.comments.length;
 
+    function findUrls(text) {
+        var pattern = /\bhttps?:\/\/[^\s()<>]+[^\s()<>]+/;
+        var match = pattern.exec(text);
+        return match ? match[0] : null;
+    }
+
+    function formatContent(content) {
+        if(PostData.formatted === false) {
+            // Regex for URLs
+            var urlPattern = /\bhttps?:\/\/[^\s()<>]+[^\s()<>]+/g;
+
+            // Replace URLs with <a> tags
+            content = content.replace(urlPattern, function(url) {
+                return '<a href="' + url + '" class="text-sky-600 hover:underline">' + url + '</a>';
+            });
+
+            // Replace @username mentions with <a> tags
+            content = content.replace(/@(\w+)/g, '<a href="/@$1" class="text-sky-600 hover:underline">@$1</a>');
+                
+            PostData.content = content;
+            PostData.formatted = true;
+            return content;
+        }
+    }
+
     async function likePost() {
-        if (!currentUser) {
+        if (!$currentUser) {
             goto('/login');
             return;
         }
@@ -37,15 +67,15 @@
 
     async function fetchData() {
         if(user) {
-            const record_ = await pb.collection("users").getOne(user.id).then((res) => {
-                return res;
-            }).catch((err) => {
-                return err;
-            }) 
-            const record = record_.avatar;
-            url = pb.files.getUrl(record_, record, {'thumb': '32x32'});
-            if(url === '') {
-                url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + user.handle;
+            try {
+                url = pb.files.getUrl(user, user.avatar, {'thumb': '32x32'});
+                if(url === '') {
+                    url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + user.handle;
+                }
+
+                console.log(url);
+            } catch (error) {
+                console.error(error);
             }
         }
     }
@@ -63,17 +93,18 @@
             }
         })
 
-
-        console.log(userLikesPost);
         return userLikesPost
     }
 
     onMount(async () => {
         await fetchData();
         await checkUserLikesPost();
-        PostData.content = PostData.content.replace(/@(\w+)/g, '<span class="text-sky-600">@$1</span>');
+        formatContent(PostData.content);
+        urls = findUrls(PostData.content)
     });
-    
+
+    $: formatContent(PostData.content);
+    $: urls = findUrls(PostData.content)
     $: time = timeAgo(PostData.created_at);
 </script>
 
@@ -83,8 +114,8 @@
     }} open={commentsOpen} originalPostData={PostData} />
 {/if}   
 
-    <div class="w-[92vw] md:w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 pb-6">
-    <p class="dark:text-white/30 font-mono text-black/50 absolute top-0 right-0">
+        <div class="px-5 w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
+    <p class="dark:text-white/30 font-mono text-black/50 absolute top-0 right-5">
         {time}
     </p>
     <div class="flex flex-col w-11 gap-3 h-full flex-shrink-0">
@@ -98,8 +129,13 @@
         </a>    
         <span class="dark:text-white/40 text-black/70 font-normal font-mono">@{user.handle}</span>
         <p class='mt-1 w-[100%] dark:text-white text-black text-left whitespace-pre-wrap break-words'>
-            {@html PostData.content.replace(/@(\w+)/g, '<a href="/@$1" class="text-sky-600 hover:underline">@$1</a>')}
+            {@html PostData.content}
         </p>
+        {#if urls}
+            {#if urls.length > 0}
+                <UrlEmbed url={urls} />
+            {/if}
+        {/if}
         <div class="w-full flex items-center justify-start mt-2 gap-3">
             {#if userLikesPost}
                 <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">

@@ -12,10 +12,21 @@
 </script>
 
 <PostCreationMenu user={$currentUser} />
-<Toast />
+<Toast /> 
 
-<html lang="en-us" class="flex flex-row items-end justify-end dark">
-    <body class="h-screen {pageIsntAuthentication ? 'w-[84%] ml-[16%]' : ''} fixed right-0 z-0 top-0 duration-200 w-screen flex items-end justify-center text-center bg-main-white dark:bg-main text-white/90 flex-col">
+<style>
+    .hide-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
+<html lang="en-us" class="flex flex-row items-center justify-center dark">
+    <body class="h-[100vh] hide-scrollbar z-0  top-0 duration-200 w-screen flex items-center flex-row-reverse justify-center text-white text-center bg-main overflow-x-hidden overflow-y-auto">
         <slot></slot>
         {#if pageIsntAuthentication}
             <Navbar />

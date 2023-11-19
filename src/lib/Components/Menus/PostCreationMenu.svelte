@@ -43,6 +43,7 @@
             postCreation.set(false);
             toast('Successfully created post!');
             content = '';
+            window.location.reload();
         }
     }
 
