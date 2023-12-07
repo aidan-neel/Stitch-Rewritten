@@ -33,7 +33,7 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
     const originalBio = user.bio;
     const originalTitle = user.title;
     const originalWebsite = user.website;
-
+    
     function isValidUrl(string: string) {
         var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
         return urlRegex.test(string);

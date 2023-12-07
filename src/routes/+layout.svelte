@@ -31,7 +31,12 @@
     </title>
     <meta name="author" content="Aidan Neel">
     <meta name="keywords" content="Aidan Neel Stitch Social Media Twitter Threads Tweet Post Echo Site Website Posts Register Sign Up">
-    <meta property="og:image" content="https://media.discordapp.net/attachments/1139174900590968862/1181876201464270848/Untitled-1.png?ex=6582a6fc&is=657031fc&hm=ccb629597430c6ad0491ee75551c3f6ddcffc9bb5f393dc501e86d25a89df42f&=&format=webp&quality=lossless&width=750&height=375" />
+    <meta name="description" content="Stitch is a social media platform that allows you to create threads of posts, and share them with your friends.">
+    <meta name="theme-color" content="#1DA1F2">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@aidan_neel">
+    <meta name="twitter:creator" content="@aidan_neel">
+    <meta property="og:image" content="https://media.discordapp.net/attachments/1139174900590968862/1181876201464270848/Untitled-1.png?ex=6582a6fc&is=657031fc&hm=ccb629597430c6ad0491ee75551c3f6ddcffc9bb5f393dc501e86d25a89df42f&=&format=webp&quality=lossless&width=1400&height=700" />
 </svelte:head>
 
 <html lang="en-us" class="flex flex-row items-center justify-center dark h-screen w-screen text-white">
