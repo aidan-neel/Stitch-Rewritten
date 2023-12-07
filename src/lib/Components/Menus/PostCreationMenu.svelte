@@ -1,6 +1,6 @@
 <script lang="ts">
     import { currentUser, pb } from "$lib/Pocketbase";
-    import { postCreation, postCreationContent } from "$lib/Stores";
+    import { postCreation, postCreationContent } from "$lib/stores";
     import { toast } from "$lib/Toast";
     import { user as UserClass } from "$lib/User";
     import CreationInput from "../Typography/CreationInput.svelte";

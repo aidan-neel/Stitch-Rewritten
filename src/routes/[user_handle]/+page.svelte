@@ -5,7 +5,7 @@
 	import Loading from '$lib/Components/Menus/Loading.svelte';
 	import SearchBar from '$lib/Components/Menus/SearchBar.svelte';
 	import { currentUser, pb } from '$lib/Pocketbase';
-	import { postCreation, postCreationContent } from '$lib/Stores.js';
+	import { postCreation, postCreationContent } from '$lib/stores.js';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 

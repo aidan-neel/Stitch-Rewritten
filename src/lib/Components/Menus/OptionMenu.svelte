@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Option } from '$lib/Modules/Types';
-    import { clickOutside } from '$lib/Modules/Utils';
+    import type { Option } from '$lib/Modules/types';
+    import { clickOutside } from '$lib/Modules/utils';
     import Icon from '@iconify/svelte';
     import { fly } from 'svelte/transition';
 

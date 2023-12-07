@@ -4,7 +4,7 @@
     import Toast from '$lib/Components/Menus/Toast.svelte';
     import Navbar from '$lib/Components/Nav/Navbar.svelte';
     import { currentUser } from '$lib/Pocketbase';
-    import { minimizedNav } from '$lib/Stores';
+    import { minimizedNav } from '$lib/stores';
     import './app.css';
     
     const minimized = $minimizedNav

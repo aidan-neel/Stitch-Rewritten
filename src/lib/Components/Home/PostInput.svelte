@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { currentUser, pb } from "$lib/Pocketbase";
-	import { postCreation } from "$lib/Stores";
+	import { postCreation } from "$lib/stores";
 	import { fly } from "svelte/transition";
 
     export let user;

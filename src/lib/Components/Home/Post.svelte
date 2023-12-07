@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { timeAgo } from "$lib/Modules/Utils";
+	import { timeAgo } from "$lib/Modules/utils";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { user as UserClass } from "$lib/User";
 	import Icon from "@iconify/svelte";

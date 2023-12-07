@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { clickOutside } from "$lib/Modules/Utils";
+    import { clickOutside } from "$lib/Modules/utils";
     import { fade, fly } from "svelte/transition";
 
     export let title;

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
-	import type { Option } from "$lib/Modules/Types";
+	import type { Option } from "$lib/Modules/types";
 	import { currentUser, pb } from "$lib/Pocketbase";
-	import { minimizedNav, postCreation } from "$lib/Stores";
+	import { minimizedNav, postCreation } from "$lib/stores";
 	import { onMount } from "svelte";
 	import OptionMenu from "../Menus/OptionMenu.svelte";
 	import NavButton from "./NavButton.svelte";
