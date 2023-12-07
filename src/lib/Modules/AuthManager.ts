@@ -24,7 +24,7 @@ export const emailTaken = async(email: string) => {
             throw err;
         }
     }
-}
+}       
 
 export const handleTaken = async(handle: string) => {
     try {
