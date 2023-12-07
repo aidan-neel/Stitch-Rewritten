@@ -1,3 +1,9 @@
+<svelte:head>
+    <title>
+        Stitch &middot; Terms of Service
+    </title>
+</svelte:head>
+
 <main class="flex flex-col w-screen h-screen items-center justify-center">
     <p class="font-semibold text-4xl">
         This is a work in progress.

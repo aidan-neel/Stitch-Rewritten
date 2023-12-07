@@ -7,34 +7,34 @@
     import { onDestroy, onMount } from "svelte";
 
     let posts = []
-    let currentNumber = 1;
     let loading = true;
 
-    let menu = true;
+    let page = 1;
+    let isFetching = false;
+    let allPostsLoaded = false;
+    let scrollableElement;
+    const pageSize = 7;
+
+    let lastScrollTop = 0; // To track the last scroll position
 
     async function fetchPosts() {
-        loading = true;
+        if (isFetching || allPostsLoaded) return;
+
+        isFetching = true;
         try {
-            const records = await pb.collection('posts').getList(currentNumber, currentNumber + 15, {
+            const records = await pb.collection('posts').getList(1, 50, {
                 sort: '-created_at',
                 expand: 'user'
-            })
+            });
 
-            const itemsToPush = [];
-            for (let i = 0; i < records.items.length; i++) {
-                itemsToPush.push(records.items[i])
-            }
-
-            itemsToPush.forEach((item) => {
-                posts = [...posts, item]
-            })
+            posts = [...posts, ...records.items];
         } catch (error) {
             console.error(error);
         } finally {
+            isFetching = false;
             loading = false;
         }
     }
-
     onMount(async() => {
         await fetchPosts();
         pb.collection('posts').subscribe('*', async ({action, record}) => {
@@ -55,6 +55,8 @@
     })
 
     $: doneLoading = posts.length > 0
+
+    let wantToJoinDivOpen = true;
 </script>
 
 <svelte:head>
@@ -80,13 +82,20 @@
     .hide-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
+    .centerDiv {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 </style>
 
 {#if loading === true}
     <Loading />
 {/if}
 
-<div class="border-l border-l-white/10 h-screen w-[17.5%] pl-8 flex items-start justify-center pt-6">
+<div class="border-l border-l-white/10 h-screen w-[17.5%] xl:flex hidden pl-8 items-start justify-center pt-6">
     <div class="w-full rounded-full bg-main p-3 border border-white/10 px-5 flex flex-row items-center justify-center gap-2">
         <Icon icon="iconamoon:search" class="h-4 w-4 text-white/60"></Icon>
         <input type="text" placeholder="Search" class="bg-transparent text-white/60 placeholder:text-white/40 outline-none border-none w-full" />

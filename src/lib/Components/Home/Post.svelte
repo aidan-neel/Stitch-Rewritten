@@ -4,9 +4,8 @@
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { user as UserClass } from "$lib/User";
 	import Icon from "@iconify/svelte";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import CommentCreationMenu from "../Menus/CommentCreationMenu.svelte";
-	import UrlEmbed from "../Menus/UrlEmbed.svelte";
     export let PostData;
     export let additionalClasses = '';
 
@@ -72,8 +71,6 @@
                 if(url === '') {
                     url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + user.handle;
                 }
-
-                console.log(url);
             } catch (error) {
                 console.error(error);
             }
@@ -96,6 +93,16 @@
         return userLikesPost
     }
 
+    onDestroy(() => {
+        postLikes = [];
+        url = '';
+        urls = '';
+        userLikesPost = false;
+        commentsOpen = false;
+        visualLikes = 0;
+        repliesAmount = 0;
+    });
+
     onMount(async () => {
         await fetchData();
         await checkUserLikesPost();
@@ -114,51 +121,59 @@
     }} open={commentsOpen} originalPostData={PostData} />
 {/if}   
 
-        <div class="px-5 w-[47.5rem] flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
-    <p class="dark:text-white/30 font-mono text-black/50 absolute top-0 right-5">
+        <div class="px-5 sm:ml-0 lg:w-full xl:w-[47.5rem] w-screen xs:w-full sm:w-full flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
+    <p class="dark:text-white/30 hidden sm:flex text-black/50 absolute top-0 right-6 md:right-5">
         {time}
     </p>
     <div class="flex flex-col w-11 gap-3 h-full flex-shrink-0">
         <img on:click={() => {
             goto(`/${user.username}`)
-        }} src={url} class="h-11 w-11  hover:cursor-pointer object-cover rounded-full border border-black/20 dark:border-white/10">
+        }} src={url} class="h-9 w-9 sm:w-11 sm:h-11  hover:cursor-pointer object-cover rounded-full border border-black/20 dark:border-white/10">
     </div>
-    <div class="pl-3 flex items-start justify-start flex-col">
-        <a href={`/${user.username}`} class="hover:underline font-medium dark:text-white text-black text-left">
-            {user.username}<br>
-        </a>    
-        <span class="dark:text-white/40 text-black/70 font-normal font-mono">@{user.handle}</span>
-        <p class='mt-1 w-[100%] dark:text-white text-black text-left whitespace-pre-wrap break-words'>
+    <div class="sm:pl-3 pl-0 flex items-start w-full justify-start flex-col">
+        <div class="items-start w-full justify-between sm:pr-16 sm:pr-0 flex flex-row sm:flex-col">
+            <aside class="items-start justify-start flex flex-row sm:flex-col">
+                <a href={`/${user.username}`} class="hover:underline font-medium dark:text-white text-black text-left">
+                    {user.username}
+                </a>    
+                <span class="dark:text-white/40 text-sm sm:text-base ml-1 mt-0.5 sm:ml-0 sm:mt-0 text-black/70 font-normal">@{user.handle}</span>    
+            </aside>
+            <span class="sm:hidden flex text-white/30">
+                {time}
+            </span>
+        </div>
+        <p class='mt-1 w-[75%] md:w-full dark:text-white text-black text-left whitespace-pre-wrap break-words'>
             {@html PostData.content}
         </p>
-        {#if urls}
-            {#if urls.length > 0}
-                <UrlEmbed url={urls} />
-            {/if}
-        {/if}
-        <div class="w-full flex items-center justify-start mt-2 gap-3">
+        <div class="w-full flex items-center justify-start mt-2 gap-10 ml-2">
             {#if userLikesPost}
-                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
-                    <Icon icon='iconamoon:heart-fill' class="w-full h-full active:scale-[1.2] duration-100 text-red-600" />
+                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                    <Icon icon='iconamoon:heart-fill' class="w-full flex-shrink-0 h-full active:scale-[1.2] duration-100 text-red-600" />
+                     <span class="mx-1 font-medium text-white/50">{visualLikes}</span>
                 </button>
             {:else}
-                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem]">
-                    <Icon icon='iconamoon:heart' class="w-full h-full active:scale-[1.2] duration-100 text-black/80 dark:text-white/80" />
+                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                    <Icon icon='iconamoon:heart' class="w-full flex-shrink-0 h-full active:scale-[1.2] duration-100 text-black/80 dark:text-white/50" />
+                     <span class="mx-1 font-medium text-white/50">{visualLikes}</span>
                 </button>
             {/if}
             <button on:click={() => {
                 commentsOpen = true;
-            }} class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon="ph:chat-circle-dots" class="w-full h-full active:scale-[1.2] duration-100   text-black/80 dark:text-white/80" />
+            }} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                <Icon icon="ph:chat-circle-dots" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100   text-black/80 dark:text-white/50" />
+                <span class="mx-1 font-medium text-white/50">{PostData.comments.length}</span>
             </button>
-            <button class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon="ph:repeat" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
+            <button class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                <Icon icon="ph:repeat" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100     text-black/80 dark:text-white/50" />
+                <span class="mx-1 font-medium text-white/50">{'0'}</span>
             </button>
-            <button class="h-[1.6rem] w-[1.6rem]">
-                <Icon icon="iconamoon:send" class="w-full h-full active:scale-[1.2] duration-100     text-black/80 dark:text-white/80" />
+            <button class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                <Icon icon="iconamoon:send" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100     text-black/80 dark:text-white/50" />
+                <span class="mx-1 font-medium text-white/50">{'0'}</span>
             </button>
         </div>
-        <div class="flex flex-row gap-6 mt-2 dark:text-white/40 font-mono text-black/70">
+        <!--
+            <div class="flex flex-row gap-6 mt-2 dark:text-white/40 text-black/70">
             <p>
                 {visualLikes} like{visualLikes > 1 ? 's' : ''}
             </p>
@@ -166,5 +181,6 @@
                 {repliesAmount} replies
             </p>
         </div>
+        -->
     </div>
 </div>

@@ -31,7 +31,7 @@
                         <p class="font-mono text-white/40 ">
                             STITCH // {$currentUser?.handle !== undefined ? `@${$currentUser.handle}` : 'Beta'}
                         </p>
-                        <p class="font-mono">
+                        <p class="font-mono text-white">
                             {notification}
                         </p>
                     </div>

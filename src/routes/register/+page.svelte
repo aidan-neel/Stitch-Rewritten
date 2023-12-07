@@ -108,11 +108,11 @@
 
 <svelte:head>
     <title>
-        Stitch | Register
+        Stitch &middot;  Register
     </title>
     <meta name="author" content="Aidan Neel">
     <meta name="keywords" content="Aidan Neel Stitch Social Media Twitter Threads Tweet Post Echo Site Website Posts Register Sign Up">
-    <meta name='description' content="Register for stitch here. Stitch is a social media platform that allows you to create threads and posts.">
+    <meta name='description' content="Register for Stitch here. Stitch is a social media platform that allows you to create threads and posts.">
 </svelte:head>
 
 {#if loading}

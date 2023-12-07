@@ -56,7 +56,6 @@ export class Posts {
 
         const post_record = await pb.collection('posts').update(data.original_post, {
             'comments+': record.id,
-            'comments_amount': post_data.comments_amount + 1,
         })
 
         return record;
@@ -74,7 +73,6 @@ export class Posts {
 
         const post_record = await pb.collection('posts').update(post, {
             'likes+': like_record.id,
-            'likes_amount': post_data.likes_amount + 1,
         })
 
         return like_record;

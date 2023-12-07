@@ -61,25 +61,25 @@ export function timeAgo(timestamp) {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // Approximation
+  const years = Math.floor(days / 365);
 
-  if (days > 1) {
-    // More than 24 hours ago, show the specific date
-    let formattedDate = date.toLocaleDateString('en-US');
-    formattedDate = formattedDate + ' at ' + date.toLocaleTimeString('en-US', options);
-    return formattedDate;
-  } else if(days == 1) {
-    return 'Yesterday at ' + date.toLocaleTimeString('en-US', options);
+  if (years > 0) {
+    return years + 'yr ago';
+  } else if (months > 0) {
+    return months + 'mo ago';
+  } else if (weeks > 0) {
+    return weeks + 'w ago';
+  } else if (days > 0) {
+    return days + 'd ago';
   } else if (hours > 0) {
-    // Less than 24 hours but more than 1 hour ago, show hours
     return hours + 'h ago';
   } else if (minutes > 0) {
-    // Less than 1 hour but more than 1 minute ago, show minutes
     return minutes + 'm ago';
   } else if (seconds > 0) {
-    // Less than 1 minute ago, show seconds
     return seconds + 's ago';
   } else {
-    // Current time
     return 'now';
   }
 }
