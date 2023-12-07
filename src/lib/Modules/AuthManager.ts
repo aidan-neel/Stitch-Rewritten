@@ -1,5 +1,5 @@
+import { imageUrlToFormData } from "$lib/Modules/Utils";
 import { pb } from "$lib/Pocketbase";
-import { imageUrlToFormData } from "./Utils";
 
 export interface AuthResponse {
     status: string;
@@ -8,6 +8,7 @@ export interface AuthResponse {
     data: any;
 }
 
+// Checks if an email is taken
 export const emailTaken = async(email: string) => {
     try {
         const data = await pb.collection('users').getFirstListItem(`user_email="${email}"`);
@@ -26,6 +27,7 @@ export const emailTaken = async(email: string) => {
     }
 }       
 
+// Checks if a handle is taken
 export const handleTaken = async(handle: string) => {
     try {
         const users = await pb.collection('users').getFirstListItem(`handle="${handle}"`)
