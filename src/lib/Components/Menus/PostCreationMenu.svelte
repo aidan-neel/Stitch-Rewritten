@@ -27,7 +27,7 @@
     async function createPost() {
         if(content !== '' && content.length <= 400 && user) {
             console.log(content);
-            const post = UserClass.posts.create({
+            const post = await UserClass.posts.create({
                 content: content,
                 user: user.id,
                 image: null,
@@ -37,10 +37,14 @@
                 reposts_amount: 0,
                 content_type: 'post'
             })
-            
-            postCreation.set(false);
-            content = '';
-            toast('Successfully created post!');
+            console.log(post);
+            if(post) {
+                postCreation.set(false);
+                content = '';
+                toast('Successfully created post!');
+            } else {
+                toast('Failed to create post!');
+            }
         }
     }
 

@@ -177,7 +177,7 @@
                 </p>
             {:else}
                 {#each user_posts as post}
-                    <Post PostData={post} additionalClasses="pt-2 pb-6 xl:w-[47.5rem] xs:w-full sm:w-full" />
+                    <Post PostData={post} additionalClasses="pt-2 pb-6 w-screen md:w-[92vw] lg:w-[58.5rem] xl:w-[47.5rem]" />
                 {/each}
             {/if}
         </div>

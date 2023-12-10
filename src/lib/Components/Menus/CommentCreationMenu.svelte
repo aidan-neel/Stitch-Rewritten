@@ -1,4 +1,5 @@
 <script>
+	import { Media } from "$lib/Modules/FileManager";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { toast } from "$lib/Toast";
 	import { user as UserClass } from "$lib/User";
@@ -14,7 +15,7 @@
     async function createComment() {
         if(content !== '' && content.length <= 400 && $currentUser) {
             try {
-                UserClass.posts.createComment({
+                const comment = await UserClass.posts.createComment({
                     content: content,
                     user: $currentUser.id,
                     original_post: originalPostData.id,
@@ -22,11 +23,12 @@
                     created_at: new Date().toISOString(),
                     image: null,
                 })
-                console.log(originalPostData)
-                toast(`Successfully replied to post!`);
-                closeFunction();
-                content = '';
-                window.location.reload();
+                if(comment) {
+                    closeFunction();
+                    content = '';
+                    toast(`Successfully replied to post!`);
+                        
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -35,16 +37,11 @@
 
     async function fetchData() {
         if($currentUser) {
-            const record_ = await pb.collection("users").getOne($currentUser.id).then((res) => {
-                return res;
-            }).catch((err) => {
-                return err;
-            }) 
-            const record = record_.avatar;
-            url = pb.files.getUrl(record_, record, {'thumb': '32x32'});
-            if(url === '') {
-                url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + $currentUser.handle;
-            }
+            const record_ = await pb.collection("users").getOne($currentUser.id, {
+                expand: 'avatar'
+            })
+            const mediaHandler = new Media(record_);
+            url = await mediaHandler.fetch_avatar();  
         }
     }
 

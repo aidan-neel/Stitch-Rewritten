@@ -19,6 +19,9 @@
     animation: fadeUp 0.5s ease-in-out;
 }
 
+:root {
+    color-scheme: dark light;
+}
 
 @keyframes fadeDown {
     from {

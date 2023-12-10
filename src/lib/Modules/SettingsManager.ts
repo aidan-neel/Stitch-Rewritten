@@ -167,7 +167,7 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
     }
 
     function ShouldSaveAvatar() {
-        if(data.avatar.url !== originalAvatar) {
+        if(data.avatar.url !== originalAvatar && data.avatar.file !== undefined || null) {
             return true;
         }
     }

@@ -3,11 +3,6 @@
     import { notifications } from '$lib/Toast';
     import 'animate.css';
     import { fly } from 'svelte/transition';
-
-    let thing = false;
-    setTimeout(() => {
-        thing = true
-    }, 1000);
 </script>
 
 <!--
@@ -23,7 +18,7 @@
 -->
 
 {#if $notifications}
-    <div class="absolute top-12 right-12 z-[99]">
+    <div class="absolute md:top-12 top-6 md:right-12 z-[99]">
         <div class="flex-col gap-4 flex items-center justify-center z-[99]">
             {#each $notifications as notification}
                 <div transition:fly="{{x: 40, duration: 350}}" class="p-3 px-5 rounded-lg flex flex-row items-center justify-center border bg-main border-white/20">

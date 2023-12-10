@@ -143,12 +143,12 @@
     </div>
     <div class="sm:pl-3 pl-0 flex items-start w-full justify-start flex-col">
         <div class="items-start w-full justify-between sm:pr-16 sm:pr-0 flex flex-row sm:flex-col">
-            <aside class="items-start justify-start flex flex-col">
+            <aside class="items-start justify-center flex flex-col">
                 <a href={`/@${user.handle}`} class="hover:underline font-medium dark:text-white text-black text-left">
                     {user.username}
                 </a>    
-                <span class="dark:text-white/40 text-sm sm:text-base ml-1 mt-0.5 sm:ml-0 sm:mt-0 text-black/70 font-normal">@{user.handle}</span>    
-            </aside>
+                <span class="dark:text-white/40 text-sm sm:text-base sm:ml-0 sm:mt-0 text-black/70 font-normal">@{user.handle}</span>    
+            </aside>    
             <span class="sm:hidden flex text-white/30">
                 {time}
             </span>

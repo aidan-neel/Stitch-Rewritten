@@ -11,8 +11,9 @@
     $: pageIsntAuthentication = $page.url.pathname !== '/login' && $page.url.pathname !== '/register' && $page.url.pathname !== '/login-beta' && $page.url.pathname !== '/register-beta'
 </script>
 
-<PostCreationMenu user={$currentUser} />
-<Toast /> 
+{#if $currentUser}
+    <PostCreationMenu user={$currentUser} />
+{/if}
 
 <style>
     .hide-scrollbar {
@@ -40,6 +41,7 @@
 </svelte:head>
 
 <html lang="en-us" class="flex flex-row items-center justify-center dark h-screen w-screen text-white bg-main">
+    <Toast /> 
     <body class="bg-main flex items-center justify-center flex-row">
         <main class="h-[100vh] hide-scrollbar flex z-0 top-0 duration-200 w-screen items-center flex-row-reverse md:justify-center text-white text-center bg-main overflow-x-hidden overflow-y-auto">
             <slot></slot>

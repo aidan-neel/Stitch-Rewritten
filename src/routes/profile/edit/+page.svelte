@@ -73,7 +73,7 @@
         }
 
         const response = await SaveProfileChanges(data, $currentUser);
-
+         
         toast(response.message)
         savingChanges = false;
     }
@@ -188,7 +188,7 @@
     </form>
     <button on:click={save_changes} disabled={savingChanges} class="bg-white mb-64 flex flex-row gap-1 {savingChanges ? 'hover:cursor-not-allowed text-black/50' : ''} text-black font-medium p-2 mt-8 px-4 rounded-md">
         {#if savingChanges}
-            <Icon icon="akar-icons:circle" class="w-5 h-5 animate-spin" />
+            <Icon icon="eos-icons:loading" class="w-5 h-5 animate-spin" />
         {/if}
         Save Changes
     </button>
