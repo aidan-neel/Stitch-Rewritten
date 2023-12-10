@@ -39,13 +39,15 @@
     <meta property="og:image" content="https://media.discordapp.net/attachments/1139174900590968862/1181876201464270848/Untitled-1.png?ex=6582a6fc&is=657031fc&hm=ccb629597430c6ad0491ee75551c3f6ddcffc9bb5f393dc501e86d25a89df42f&=&format=webp&quality=lossless&width=1400&height=700" />
 </svelte:head>
 
-<html lang="en-us" class="flex flex-row items-center justify-center dark h-screen w-screen text-white">
-    <main class="h-[100vh] hide-scrollbar flex z-0  top-0 duration-200 w-screen items-center flex-row-reverse justify-center text-white text-center bg-main overflow-x-hidden overflow-y-auto">
-        <slot></slot>
-        {#if pageIsntAuthentication}
-            <Navbar />
-        {/if}
-    </main>
+<html lang="en-us" class="flex flex-row items-center justify-center dark h-screen w-screen text-white bg-main">
+    <body class="bg-main flex items-center justify-center flex-row">
+        <main class="h-[100vh] hide-scrollbar flex z-0 top-0 duration-200 w-screen items-center flex-row-reverse md:justify-center text-white text-center bg-main overflow-x-hidden overflow-y-auto">
+            <slot></slot>
+            {#if pageIsntAuthentication}
+                <Navbar />
+            {/if}
+        </main>
+    </body>
     <!-- Mobile is not supported yet block
     <main class="visible md:hidden h-full w-full flex items-center justify-center bg-main  flex-col">
         <div class="flex items-start justify-center px-6 flex-col">

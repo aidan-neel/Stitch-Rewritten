@@ -13,76 +13,21 @@ export interface CustomizableProfileData {
     bio: string,
     title: string,
     website: string,
+    banner: Object,
+    avatar: Object,
 }
 
-export async function SaveProfileChanges(data: CustomizableProfileData, user: any): any {
-    const MAX_HANDLE_USERNAME_CHARACTERS = 24;
-    const MAX_BIO_CHARACTERS = 200;
-    const MAX_TITLE_CHARACTERS = 36;
-    const MAX_WEBSITE_CHARACTERS = 100;
 
-    if(!user || !data) return {
-        status: 'error',
-        message: 'Invalid data.',
-        time: new Date().toISOString(),
-        data: null
-    }
-    
-    const originalHandle = user.handle;
-    const originalUsername = user.username;
-    const originalBio = user.bio;
-    const originalTitle = user.title;
-    const originalWebsite = user.website;
-    
-    function isValidUrl(string: string) {
-        var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-        return urlRegex.test(string);
-    }
-    
+class Saving {    
+    user: string;
 
-    // If this returns true, it will save the handle when it gets to the update profile part.
-    // If it returns false, it will not save the handle.
-    async function ShouldSaveHandle() {
-        if(data.handle !== originalHandle) {
-            return true;
-        } else { return false }
+    constructor(user: string) {
+        this.user = user;
     }
 
-    // If this returns true, it will save the username when it gets to the update profile part.
-    // If it returns false, it will not save the username.
-    function ShouldSaveUsername() {
-        if(data.username !== originalUsername) {
-            return true;
-        } else { return false };
-    }
-
-    // If this returns true, it will save the bio when it gets to the update profile part.
-    // If it returns false, it will not save the bio.
-    function ShouldSaveBio() {
-        if(data.bio !== originalBio && data.bio.length <= 200) {
-            return true;
-        } else { return false };
-    }
-
-    // If this returns true, it will save the title when it gets to the update profile part.
-    // If it returns false, it will not save the title.
-    function ShouldSaveTitle() {
-        if(data.title !== originalTitle) {
-            return true;
-        } else { return false };
-    }
-
-    // If this returns true, it will save the website when it gets to the update profile part.
-    // If it returns false, it will not save the website.
-    function ShouldSaveWebsite() {
-        if(data.website !== originalWebsite) {
-            return true;
-        } else { return false };
-    }
-
-    async function Save(item: string, value: string) {
+    async Save(item: string, value: string) {
         try {
-            await pb.collection('users').update(user.id, {
+            await pb.collection('users').update(this.user.id, {
                 [item]: value
             })
         } catch(err) {
@@ -101,13 +46,157 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
             }
         }
     }
+}
+
+export async function UpdateBannerImage(banner: any, user: any) {
+    if(!user || !banner) return {
+        status: 'error',
+        message: 'Invalid data.',
+        time: new Date().toISOString(),
+        data: null
+    }
+
+    const formData = new FormData();
+    formData.append('file', banner.file);
+    formData.append('title', 'banner');
+    
+    const createdRecord = await pb.collection('media').create(formData);
+    const updatedProfile = await pb.collection('users').update(user.id, {
+        banner: createdRecord.id
+    })
+
+    if(createdRecord.status === 'error') {
+        return {
+            status: 'error',
+            message: 'Something went wrong.',
+            time: new Date().toISOString(),
+            data: null
+        }
+    } else {
+        return {
+            status: 'success',
+            message: 'Banner updated.',
+            time: new Date().toISOString(),
+            data: null
+        }
+    }
+}
+
+export async function UpdateAvatarImage(avatar: any, user: any) {
+    if(!user || !avatar) return {
+        status: 'error',
+        message: 'Invalid data.',
+        time: new Date().toISOString(),
+        data: null
+    }
+
+    const formData = new FormData();
+    formData.append('file', avatar.file);
+    formData.append('title', 'avatar');
+    
+    const createdRecord = await pb.collection('media').create(formData);
+    const updatedProfile = await pb.collection('users').update(user.id, {
+        avatar: createdRecord.id    
+    })
+
+    if(createdRecord.status === 'error') {
+        return {
+            status: 'error',
+            message: 'Something went wrong.',
+            time: new Date().toISOString(),
+            data: null
+        }
+    } else {
+        return {
+            status: 'success',
+            message: 'Avatar updated.',
+            time    : new Date().toISOString(),
+            data: null
+        }
+    }
+}
+
+export async function SaveProfileChanges(data: CustomizableProfileData, user: any): any {
+    const MAX_HANDLE_USERNAME_CHARACTERS = 24;
+    const MAX_BIO_CHARACTERS = 200; 
+    const MAX_TITLE_CHARACTERS = 36;
+    const MAX_WEBSITE_CHARACTERS = 100;
+
+    const Save = new Saving(user);
+
+    console.log(data);
+
+    if(!user || !data) return {
+        status: 'error',
+        message: 'Invalid data.',
+        time: new Date().toISOString(),
+        data: null
+    }
+    
+    const originalHandle = user.handle;
+    const originalUsername = user.username;
+    const originalBio = user.bio;
+    const originalTitle = user.title;
+    const originalWebsite = user.website;
+    const originalBanner = user.banner;
+    const originalAvatar = user.avatar;
+    
+    function isValidUrl(string: string) {
+        var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        return urlRegex.test(string);
+    }
+    
+    async function ShouldSaveHandle() {
+        if(data.handle !== originalHandle) {
+            return true;
+        } else { return false }
+    }
+
+    function ShouldSaveUsername() {
+        if(data.username !== originalUsername) {
+            return true;
+        } else { return false };
+    }
+
+    function ShouldSaveBanner() {
+        if(data.banner.url !== originalBanner && data.banner.file !== undefined || null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function ShouldSaveAvatar() {
+        if(data.avatar.url !== originalAvatar) {
+            return true;
+        }
+    }
+
+    function ShouldSaveBio() {
+        if(data.bio !== originalBio && data.bio.length <= 200) {
+            return true;
+        } else { return false };
+    }
+
+    function ShouldSaveTitle() {
+        if(data.title !== originalTitle) {
+            return true;
+        } else { return false };
+    }
+
+    function ShouldSaveWebsite() {
+        if(data.website !== originalWebsite) {
+            return true;
+        } else { return false };
+    }
 
     const saveHandle = await ShouldSaveHandle();
     const saveUsername = ShouldSaveUsername();
     const saveBio = ShouldSaveBio();
     const saveTitle = ShouldSaveTitle();
     const saveWebsite = ShouldSaveWebsite();
-    
+    const saveBanner = ShouldSaveBanner();
+    const saveAvatar = ShouldSaveAvatar();
     
     if(saveHandle) {
         if(data.handle.length > MAX_HANDLE_USERNAME_CHARACTERS) return {
@@ -119,9 +208,22 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
 
         try {
             const users = await pb.collection('users').getFirstListItem(`handle="${data.handle}"`)
+            if(users) return {
+                status: 'error',
+                message: 'Handle is already in use.',
+                time: new Date().toISOString(),
+                data: null
+            }
+
+            return {
+                status: 'error',
+                message: 'Successfully updated profile.',
+                time: new Date().toISOString(),
+                data: null
+            }
         } catch (err) {
             if (err.status === 404) {
-                const handleSaved = await Save('handle', data.handle);
+                const handleSaved = await Save.Save('handle', data.handle);
                 if(handleSaved.status === 'error') {
                     return handleSaved;
                 }
@@ -134,13 +236,6 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
                     data: null
                 }
             }
-        } finally {
-            return {
-                status: 'error',
-                message: 'Handle is already in use.',
-                time: new Date().toISOString(),
-                data: null
-            }
         }
     }
 
@@ -152,7 +247,9 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
             data: null
         }
 
-        const usernameSaved = await Save('username', data.username);
+        console.log(data.username);
+
+        const usernameSaved = await Save.Save('username', data.username);
         if(usernameSaved.status === 'error') {
             return usernameSaved;
         }
@@ -166,7 +263,7 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
             data: null
         }
 
-        const bioSaved = await Save('bio', data.bio);
+        const bioSaved = await Save.Save('bio', data.bio);
         if(bioSaved.status === 'error') {
             return bioSaved;
         }
@@ -180,7 +277,7 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
             data: null
         }
 
-        const titleSaved = await Save('job_title', data.title);
+        const titleSaved = await Save.Save('job_title', data.title);
         if(titleSaved.status === 'error') {
             return titleSaved;
         }
@@ -203,9 +300,24 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
             data: null
         }
 
-        const websiteSaved = await Save('website', data.website);
+        const websiteSaved = await Save.Save('website', data.website);
         if(websiteSaved.status === 'error') {
             return websiteSaved;
+        }
+    }
+
+    if(saveBanner) {
+        const bannerSaved = await UpdateBannerImage(data.banner, user);
+        if(bannerSaved.status === 'error') {
+            return bannerSaved;
+        }
+    }
+
+    if (saveAvatar) {
+        console.log(data.avatar)
+        const avatarSaved = await UpdateAvatarImage(data.avatar, user);
+        if(avatarSaved.status === 'error') {
+            return avatarSaved;
         }
     }
 
@@ -216,3 +328,4 @@ export async function SaveProfileChanges(data: CustomizableProfileData, user: an
         data: null
     }
 }
+

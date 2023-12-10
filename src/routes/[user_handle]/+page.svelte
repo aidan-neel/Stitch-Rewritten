@@ -4,6 +4,7 @@
 	import Post from '$lib/Components/Home/Post.svelte';
 	import Loading from '$lib/Components/Menus/Loading.svelte';
 	import SearchBar from '$lib/Components/Menus/SearchBar.svelte';
+	import { Media } from '$lib/Modules/FileManager.js';
 	import { currentUser, pb } from '$lib/Pocketbase';
 	import { postCreation, postCreationContent } from '$lib/stores.js';
 	import Icon from '@iconify/svelte';
@@ -32,30 +33,20 @@
     async function fetchData() {
         if(user_handle) {
             try {
-                loading = true;
-                const user = await pb.collection('users').getList(1, 3, {
-                    filter: `handle = "${user_handle}"`
+                loading = false;
+                const user = await pb.collection('users').getList(1, 2, {
+                    filter: `handle = "${user_handle}"`,
+                    expand: 'avatar, banner'
                 });
 
-                const data = user.items[0];
-                const record = data.avatar;
-
-                user_data = data;
-
-                url = pb.files.getUrl(data, record, {'thumb': '32x32'});
-                if(url === '') {
-                    url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + user_handle;
-                }
-
-                const banner_ = data.banner;
-
-                banner = pb.files.getUrl(data, banner_, {'thumb': '1500x450'});
-                if(banner === '') {
-                    banner = null;
-                }
+                const MediaHandler = new Media(user.items[0]);
+                url = await MediaHandler.fetch_avatar();
+                banner = await MediaHandler.fetch_banner();
+                
+                user_data = user.items[0];
 
                 const posts = await pb.collection('posts').getList(1, 20, {
-                    filter: `user.id = "${data.id}"`,
+                    filter: `user.id = "${user.items[0].id}"`,
                     sort: '-created_at',
                     expand: 'user'
                 });
@@ -122,28 +113,23 @@
 {#if loading === false && user_data !== null}
     <SearchBar />
     <div class="flex xl:w-[47.5rem] w-full overflow-x-hidden overflow-y-auto hide-scrollbar flex-col h-full items-center justify-start relative">
-        {#if banner === null}
-            <div class="bg-white/70 border-b border-b-white/10 h-1/6 flex-shrink-0 w-full relative flex items-end justify-center">
-            </div>
-        {:else}
-            <div class="bg-white/70 border-b border-b-white/10 h-1/6 flex-shrink-0 flex items-center justify-center w-full relative">
-                <img src={banner} alt="Profile Banner" class="w-full h-full object-cover">
-            </div>
-        {/if}
+        <div class="border-b border-b-white/10 h-1/6 flex-shrink-0 flex items-center justify-center w-full relative">
+            <img src={banner} alt="Profile Banner" class="w-full h-full object-cover">
+        </div>
         <div class="w-full flex items-start justify-start mt-4 flex-col">
             <section class="flex flex-row items-start justify-between w-full">
-                <section class="flex items-start justify-start flex-col pl-4 sm:pl-8">
+                <section class="flex items-start justify-start flex-col pl-4 sm:pl-8">  
                     <img src={url} class="h-[8rem] w-[8rem] border-[5px] border-main rounded-full object-cover">
                     <h1 class="font-bold text-2xl">
                         {user_data.username}
                     </h1>
-                    <p class="text-white/50 text-left">
-                        @{user_data.handle},<br> {#if user_data.job_title} 
-                            {user_data.job_title}
+                    <p class="text-white/50 text-left flex flex-col md:flex-row md:gap-1">
+                        @{user_data.handle}{#if user_data.job_title},
+                            <span>{user_data.job_title}</span>
                         {/if}
                     </p>
                     <p class="mt-1 w-2/3 whitespace-pre-wrap text-left break-words">
-                        {user_data.bio}
+                        {user_data.bio ? user_data.bio : 'No bio yet'}
                     </p>
     
                     <div class="flex flex-row items-center justify-center gap-4 text-white/50 mt-2">
@@ -191,7 +177,7 @@
                 </p>
             {:else}
                 {#each user_posts as post}
-                    <Post PostData={post} additionalClasses="pt-2 pb-4" />
+                    <Post PostData={post} additionalClasses="pt-2 pb-6 xl:w-[47.5rem] xs:w-full sm:w-full" />
                 {/each}
             {/if}
         </div>

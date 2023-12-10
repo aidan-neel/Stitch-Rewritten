@@ -6,6 +6,7 @@
 	import SubTitle from "$lib/Components/Typography/SubTitle.svelte";
 	import Title from "$lib/Components/Typography/Title.svelte";
 	import { LoginWithEmailAndPassword, emailTaken } from "$lib/Modules/AuthManager";
+	import { pb } from "$lib/Pocketbase";
 	import { toast } from "$lib/Toast";
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
@@ -81,15 +82,21 @@
     async function Login() {
         loading = true;
         try {
-            await LoginWithEmailAndPassword(saved_email, password);
-        } catch(err) {
-            toast(err);
-        } finally {
-            toast('Successfully logged in');
-            goto('/');
-            setTimeout(() => {
+            const logIn = await LoginWithEmailAndPassword(saved_email, password);
+            if(logIn.status === 'error') {
                 loading = false;
-            }, 500);
+                toast(logIn.message);
+                return;
+            } else {
+                goto('/');
+                setTimeout(() => {
+                    loading = false;
+                }, 500);
+                toast('Successfully logged in');
+            }
+        } catch(err) {
+            toast('An error occurred');
+            console.log(err);
         }
     }
 
@@ -153,7 +160,26 @@
                     </p>
                 </div>
 
-                <button class="mt-10 flex items-center justify-center w-full hover:bg-white hover:bg-opacity-[0.015] rounded-lg border border-white/20 p-2.5 font-medium ">
+                <button on:click={async() => {
+                    console.log('clicked');
+                    try {
+                        const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' });
+                        console.log(authData.record.handle);
+                        console.log(authData.record);
+                        if(authData.record.handle === '') {
+                            const updatedAuth = await pb.collection('users').update(authData.record.id, {
+                                handle: authData.record.email.split('@')[0],
+                            })
+                            console.log(updatedAuth);
+                        }
+                        if(authData) {
+                            goto('/');
+                            toast('Successfully logged in');
+                        }
+                    } catch(err) {
+                        console.log(err);
+                    }
+                }} class="mt-10 flex items-center justify-center w-full hover:bg-white hover:bg-opacity-[0.015] rounded-lg border border-white/20 p-2.5 font-medium ">
                     <Icon icon="fa6-brands:google" class="h-4 w-4 text-white mr-2"></Icon>Google
                 </button> 
 
@@ -181,7 +207,11 @@
                     </p>
                 </div>
 
-                <button class="mt-10 flex items-center justify-center w-full hover:bg-white hover:bg-opacity-[0.015] rounded-lg border border-white/20 p-2.5 font-medium ">
+                <button on:click={() => {
+                    console.log('clicked');
+                    const authData = pb.collection('users').authWithOAuth2({ provider: 'google' })
+                    console.log(authData);
+                }} class="mt-10 flex items-center justify-center w-full hover:bg-white hover:bg-opacity-[0.015] rounded-lg border border-white/20 p-2.5 font-medium ">
                     <Icon icon="fa6-brands:google" class="h-4 w-4 text-white mr-2"></Icon>Google
                 </button> 
 

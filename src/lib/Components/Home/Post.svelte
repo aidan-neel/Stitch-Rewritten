@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { Media } from "$lib/Modules/FileManager";
 	import { timeAgo } from "$lib/Modules/utils";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { user as UserClass } from "$lib/User";
 	import Icon from "@iconify/svelte";
 	import { onDestroy, onMount } from "svelte";
 	import CommentCreationMenu from "../Menus/CommentCreationMenu.svelte";
+    
     export let PostData;
     export let additionalClasses = '';
-
 
     const user = PostData.expand.user
     let postLikes: any[] = PostData.likes;
@@ -64,18 +65,17 @@
         }
     }
 
-    async function fetchData() {
-        if(user) {
+    async function fetchData(userData) {
+        if(userData) {
             try {
-                url = pb.files.getUrl(user, user.avatar, {'thumb': '32x32'});
-                if(url === '') {
-                    url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + user.handle;
-                }
+                const MediaHandler = new Media(userData);
+                url = await MediaHandler.fetch_avatar();
             } catch (error) {
                 console.error(error);
             }
         }
     }
+    
 
     async function checkUserLikesPost() {
         if (!currentUser) return;
@@ -101,13 +101,24 @@
         commentsOpen = false;
         visualLikes = 0;
         repliesAmount = 0;
+
+        pb.autoCancellation(true);
     });
 
     onMount(async () => {
-        await fetchData();
+        pb.autoCancellation(false);
+        const userData = await pb.collection('users').getOne(user.id, {
+            expand: 'avatar',
+        });
+        
+        if(userData) {
+            await fetchData(userData);
+        }
+
         await checkUserLikesPost();
         formatContent(PostData.content);
         urls = findUrls(PostData.content)
+        pb.autoCancellation(true);
     });
 
     $: formatContent(PostData.content);
@@ -121,19 +132,19 @@
     }} open={commentsOpen} originalPostData={PostData} />
 {/if}   
 
-        <div class="px-5 sm:ml-0 lg:w-full xl:w-[47.5rem] w-screen xs:w-full sm:w-full flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
+<div on:click|stopPropagation={() => {goto(`/@${user.handle}/${PostData.id}`)}} class="px-5 hover:cursor-pointer sm:ml-0 flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
     <p class="dark:text-white/30 hidden sm:flex text-black/50 absolute top-0 right-6 md:right-5">
         {time}
     </p>
     <div class="flex flex-col w-11 gap-3 h-full flex-shrink-0">
-        <img on:click={() => {
-            goto(`/${user.username}`)
+        <img on:click|stopPropagation={() => {
+            goto(`/@${user.handle}`)
         }} src={url} class="h-9 w-9 sm:w-11 sm:h-11  hover:cursor-pointer object-cover rounded-full border border-black/20 dark:border-white/10">
     </div>
     <div class="sm:pl-3 pl-0 flex items-start w-full justify-start flex-col">
         <div class="items-start w-full justify-between sm:pr-16 sm:pr-0 flex flex-row sm:flex-col">
-            <aside class="items-start justify-start flex flex-row sm:flex-col">
-                <a href={`/${user.username}`} class="hover:underline font-medium dark:text-white text-black text-left">
+            <aside class="items-start justify-start flex flex-col">
+                <a href={`/@${user.handle}`} class="hover:underline font-medium dark:text-white text-black text-left">
                     {user.username}
                 </a>    
                 <span class="dark:text-white/40 text-sm sm:text-base ml-1 mt-0.5 sm:ml-0 sm:mt-0 text-black/70 font-normal">@{user.handle}</span>    
@@ -147,27 +158,42 @@
         </p>
         <div class="w-full flex items-center justify-start mt-2 gap-10 ml-2">
             {#if userLikesPost}
-                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                <button on:click|stopPropagation={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
                     <Icon icon='iconamoon:heart-fill' class="w-full flex-shrink-0 h-full active:scale-[1.2] duration-100 text-red-600" />
                      <span class="mx-1 font-medium text-white/50">{visualLikes}</span>
                 </button>
             {:else}
-                <button on:click={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+                <button on:click|stopPropagation={likePost} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
                     <Icon icon='iconamoon:heart' class="w-full flex-shrink-0 h-full active:scale-[1.2] duration-100 text-black/80 dark:text-white/50" />
                      <span class="mx-1 font-medium text-white/50">{visualLikes}</span>
                 </button>
             {/if}
-            <button on:click={() => {
-                commentsOpen = true;
+            <button on:click|stopPropagation={() => {
+                if(!currentUser) {
+                    goto('/login');
+                    return;
+                } else {
+                    commentsOpen = true;
+                }
             }} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
                 <Icon icon="ph:chat-circle-dots" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100   text-black/80 dark:text-white/50" />
                 <span class="mx-1 font-medium text-white/50">{PostData.comments.length}</span>
             </button>
-            <button class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+            <button on:click|stopPropagation={() => {
+                if(!currentUser) {
+                    goto('/login');
+                    return;
+                }
+            }} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
                 <Icon icon="ph:repeat" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100     text-black/80 dark:text-white/50" />
                 <span class="mx-1 font-medium text-white/50">{'0'}</span>
             </button>
-            <button class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
+            <button on:click|stopPropagation={() => {
+                if(!currentUser) {
+                    goto('/login');
+                    return;
+                }
+            }} class="h-[1.6rem] w-[1.6rem] flex flex-row items-center justify-center">
                 <Icon icon="iconamoon:send" class="w-full h-full flex-shrink-0 active:scale-[1.2] duration-100     text-black/80 dark:text-white/50" />
                 <span class="mx-1 font-medium text-white/50">{'0'}</span>
             </button>

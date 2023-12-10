@@ -13,6 +13,7 @@
     let isFetching = false;
     let allPostsLoaded = false;
     let scrollableElement;
+    let userData;
     const pageSize = 7;
 
     let lastScrollTop = 0; // To track the last scroll position
@@ -95,7 +96,7 @@
     <Loading />
 {/if}
 
-<div class="border-l border-l-white/10 h-screen w-[17.5%] xl:flex hidden pl-8 items-start justify-center pt-6">
+<div class="border-l border-l-white/10 h-screen w-[28rem] xl:flex hidden px-8 items-start justify-center pt-6">
     <div class="w-full rounded-full bg-main p-3 border border-white/10 px-5 flex flex-row items-center justify-center gap-2">
         <Icon icon="iconamoon:search" class="h-4 w-4 text-white/60"></Icon>
         <input type="text" placeholder="Search" class="bg-transparent text-white/60 placeholder:text-white/40 outline-none border-none w-full" />
@@ -106,7 +107,7 @@
     <div class="w-full overflow-y-auto fadeUp fadeUpFast gap-6 grid overflow-x-hidden hide-scrollbar items-center justify-center">
         <PostInput user={$currentUser} />
         {#each posts as post}
-            <Post PostData={post} additionalClasses="pb-6" />
+            <Post PostData={post} additionalClasses="pb-6 w-screen md:w-[92vw] lg:w-[58.5rem] xl:w-[47.5rem]" />
         {/each}
     </div>
 </div>

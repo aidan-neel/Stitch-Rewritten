@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { Media } from "$lib/Modules/FileManager";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { postCreation } from "$lib/stores";
 	import { fly } from "svelte/transition";
@@ -10,16 +11,13 @@
 
     async function fetchData() {
         if(user && $currentUser) {
-            const record_ = await pb.collection("users").getOne($currentUser.id).then((res) => {
-                return res;
-            }).catch((err) => {
-                return err;
-            }) 
-            const record = record_.avatar;
-            url = pb.files.getUrl(record_, record, {'thumb': '32x32'});
-            if(url === '') {
-                url = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + $currentUser.handle;
-            }
+            pb.autoCancellation(false);
+            const record_ = await pb.collection("users").getOne($currentUser.id, {
+                expand: 'avatar'
+            })
+            const mediaHandler = new Media(record_);
+            url = await mediaHandler.fetch_avatar();     
+            pb.autoCancellation(true);       
         }
     }
 
@@ -38,7 +36,7 @@
                 <button on:click={() => {
                     postCreation.set(true);
                 }} class="hover:cursor-text dark:text-white/40 text-black/50 font-medium w-full text-left">
-                    What's on your mind?
+                    What's new?
                 </button>
             </div>
             <button on:click={() => {
@@ -56,7 +54,7 @@
                 <button on:click={() => {
                     goto('/login');
                 }} class="hover:cursor-text dark:text-white/40 text-black/50 font-medium w-full text-left">
-                    What's on your mind?
+                    What's new?
                 </button>
             </div>
             <button on:click={() => {

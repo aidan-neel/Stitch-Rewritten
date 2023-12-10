@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import Loading from "$lib/Components/Menus/Loading.svelte";
+	import Input from "$lib/Components/Profile/Input.svelte";
 	import NavSettingsButton from "$lib/Components/Profile/NavSettingsButton.svelte";
+	import Textarea from "$lib/Components/Profile/Textarea.svelte";
 	import type { CustomizableProfileData } from "$lib/Modules/SettingsManager";
 	import { SaveProfileChanges } from "$lib/Modules/SettingsManager";
 	import { currentUser } from "$lib/Pocketbase";
@@ -41,6 +43,17 @@
     }
 </script>
 
+<style>
+    .hide-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
 {#if !original_bio || !original_displayName || !original_handle}
     <Loading />
 {/if}
@@ -49,12 +62,12 @@
     <title>Stitch &middot; Edit Profile</title>
 </svelte:head>
 
-<main class="w-screen fadeUp h-screen flex items-start flex-col justify-start pt-24 pl-4 relative">
+<main class="w-screen fadeUp scrollbar-hide flex items-start flex-col xl:pr-96 2xl:pr-[48rem] xl:pl-20 justify-start h-screen overflow-y-auto pt-20 px-4 relative">
     <div class="flex flex-col items-start justify-start text-left w-full border-b border-b-white/10 pb-6">
         <h1 class="text-white font-semibold text-2xl w-full">
             Settings
         </h1>
-        <p class='text-white/80 font-light w-full'>
+        <p class='text-white/70 font-light w-full'>
             Manage your account preferences and settings.
         </p>
     </div>
@@ -66,4 +79,29 @@
             Account
         </NavSettingsButton>
     </nav>
+    <header class="w-full items-start justify-start text-left mt-8 pb-6 border-b border-b-white/10">
+        <h1 class="text-xl font-medium w-full">
+            Profile
+        </h1>
+        <p class="text-white/70 font-light w-full">
+            This is how others will see you on Stitch.
+        </p>
+    </header>
+    <form class="mt-6 w-full flex flex-col gap-7">
+        <Input type="text" label="Handle (@)" value={handle} placeholder={original_handle}>
+            This is your public account identifier. It can be your real name or a pseudonym. You can change this every 30 days.
+        </Input>
+        <Input type="text" label="Display Name" value={displayName} placeholder={original_displayName}>
+            This is your public display name. It can be your real name or a pseudonym. You can change this at any time.
+        </Input>
+        <Textarea label="Bio" value={bio} placeholder={original_bio}>
+            This is your public bio. It can be a short description of yourself, your interests, or your business. You can change this at any time.
+        </Textarea>
+        <Input type="text" label="Title" value={job_title} placeholder={original_job_title}>
+            This is your title. It shows up under your name on your profile. You can change this at any time.
+        </Input>
+    </form>
+    <button on:click={save_changes} class="bg-white mb-64 text-black font-medium p-2 mt-8 px-4 rounded-md">
+        Save Changes
+    </button>
 </main>
