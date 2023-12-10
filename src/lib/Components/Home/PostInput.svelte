@@ -29,7 +29,7 @@
 </script>
 
 {#if user && $currentUser}
-    <div class="w-full fadeUp px-5 mt-6 flex items-center justify-start h-20 border-b border-b-black/20 dark:border-b-white/10">
+    <div class="w-full fadeUp px-5 mt-4 flex items-center justify-start h-20 border-b border-b-black/20 dark:border-b-white/10">
         <img src={url} class="h-11 w-11 rounded-full object-cover">
         <div class="flex flex-row items-center justify-between ml-4 w-full">
             <div class="flex flex-col items-start justify-start w-full">

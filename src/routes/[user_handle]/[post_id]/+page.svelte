@@ -7,8 +7,13 @@
     export let data;
 
     const post_id = data.post_id;
-    let post_data = data.post_data;
-    let post_owner = post_data.expand?.user;
+    const post_data = data.post_data;
+    const post_owner = post_data.expand?.user;
+    const post_comments = post_data.expand?.comments;
+
+    post_comments.forEach((comment) => {
+        comment.user = comment.expand?.user;
+    });
 
     console.log(post_data)
 </script>
@@ -22,7 +27,7 @@
 </svelte:head>
 
 <SearchBar />
-<main class="h-screen">
+<main class="h-screen relative">
     <header class="flex flex-row fadeUp justify-start gap-4 pb-6 pt-6 border-b border-b-white/10">
         <button on:click={() => {
             window.history.back();
@@ -39,6 +44,7 @@
         </div>
     </header>
     <article class="mt-6 fadeUp">
+        <!-- Create new "PagePost" component that looks different and more special -->
         <Post PostData={post_data} additionalClasses="pb-6 w-screen md:w-[92vw] lg:w-[58.5rem] xl:w-[47.5rem]" />
         <header class='w-full py-4 border-b border-white/10 pl-5 flex'>
             <h1 class="font-medium">
@@ -48,5 +54,16 @@
                 {post_data.comments.length}
             </span>
         </header>
+        <div class="mt-6">
+            {#each post_data.expand?.comments as comment}
+                <Post PostData={comment} additionalClasses="pb-6 w-screen md:w-[92vw] lg:w-[58.5rem] xl:w-[47.5rem]" />
+            {/each}
+        </div> 
     </article>
+    <aside class="w-full absolute bottom-0 p-6 border-t border-t-white/10">
+        <input type="text" placeholder="What do you want to reply?" class="bg-black/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none border border-white/10 focus:border-white/20 py-4 text-left pl-4 w-full">
+        <button class="z-20 absolute right-12 top-1/2 transform -translate-y-1/2 ">
+            <Icon icon="akar-icons:send" class="w-5 h-5 text-white/50" />
+        </button>
+    </aside>
 </main>

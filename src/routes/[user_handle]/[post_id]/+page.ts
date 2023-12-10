@@ -5,15 +5,15 @@ export const load = async({ params }) => {
         const post_id = params.post_id
         pb.autoCancellation(false);
         const post_data = await pb.collection('posts').getOne(post_id, {
-            'expand': 'user, likes'
+            'expand': 'user, comments, comments.user'
         });
+        console.log(post_data)
         pb.autoCancellation(true);
-        console.log(post_data);
         return { post_id, post_data };
     } catch (error) {
         console.error("Error fetching user data:", error);
         // Handle the error appropriately
         // For example, return an error state or a default state
-        return { error: true }; 
+        throw error(error);
     }
 };

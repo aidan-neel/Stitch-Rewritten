@@ -27,7 +27,8 @@
                     closeFunction();
                     content = '';
                     toast(`Successfully replied to post!`);
-                        
+                } else {
+                    toast(`Failed to reply to post!`);
                 }
             } catch (error) {
                 console.error(error);

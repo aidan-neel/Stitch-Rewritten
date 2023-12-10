@@ -16,6 +16,7 @@
     let banner;
     let loading;
     let user_data = null;
+    let error = false;
 
     let user_posts = [];
 
@@ -38,6 +39,12 @@
                     filter: `handle = "${user_handle}"`,
                     expand: 'avatar, banner'
                 });
+
+                if(user.items[0] === undefined || null || '') {
+                    error = true;
+                    goto('/user-not-found');
+                    return;
+                }
 
                 const MediaHandler = new Media(user.items[0]);
                 url = await MediaHandler.fetch_avatar();
@@ -112,7 +119,7 @@
 
 {#if loading === false && user_data !== null}
     <SearchBar />
-    <div class="flex xl:w-[47.5rem] w-full overflow-x-hidden overflow-y-auto hide-scrollbar flex-col h-full items-center justify-start relative">
+    <div class="flex fadeUp xl:w-[47.5rem] w-full overflow-x-hidden overflow-y-auto hide-scrollbar flex-col h-full items-center justify-start relative">
         <div class="border-b border-b-white/10 h-1/6 flex-shrink-0 flex items-center justify-center w-full relative">
             <img src={banner} alt="Profile Banner" class="w-full h-full object-cover">
         </div>

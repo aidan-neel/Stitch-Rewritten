@@ -132,7 +132,7 @@
     }} open={commentsOpen} originalPostData={PostData} />
 {/if}   
 
-<div on:click|stopPropagation={() => {goto(`/@${user.handle}/${PostData.id}`)}} class="px-5 hover:cursor-pointer sm:ml-0 flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
+<div on:click|stopPropagation={() => {goto(`/@${user.handle}/${PostData.id}`)}} class="px-5 fadeUp hover:cursor-pointer sm:ml-0 flex items-start justify-start h-full flex-row relative border-b border-black/20 dark:border-white/10 {additionalClasses}">
     <p class="dark:text-white/30 hidden sm:flex text-black/50 absolute top-0 right-6 md:right-5">
         {time}
     </p>
