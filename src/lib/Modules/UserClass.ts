@@ -49,7 +49,7 @@ export class Posts {
             return "No data provided";
         }
         
-        const record = await pb.collection("comments").create(data);
+        const record = await pb.collection("posts").create(data);
         const post_data = await pb.collection('posts').getOne(data.original_post, {
             expand: 'comments'
         })

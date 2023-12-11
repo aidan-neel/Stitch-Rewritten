@@ -4,6 +4,7 @@
     export let content;
     export let value;
     export let small = false;
+    export let additionalClasses = '';
 
     let div: HTMLDivElement;
 
@@ -35,7 +36,7 @@
     }); 
 </script>
 
-<div on:click|stopPropagation bind:this={div} bind:innerText={value} on:input={handleInput} contenteditable="true" class="whitespace-pre-wrap break-words text-left z-30 w-[80%] focus:outline-none dark:text-white/80 text-black/80"></div>
+<div on:click|stopPropagation bind:this={div} bind:innerText={value} on:input={handleInput} contenteditable="true" class="whitespace-pre-wrap {additionalClasses} break-words text-left z-30 w-[80%] focus:outline-none dark:text-white/80 text-black/80"></div>
 {#if content === ''}
     <button on:click={() => {div.focus()}} class="absolute top-6 select-none hover:cursor-text z-30 text-black/60 dark:text-white/40">
         <slot></slot>

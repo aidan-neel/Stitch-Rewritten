@@ -1,4 +1,5 @@
 <script>
+	import { goto } from "$app/navigation";
 	import { Media } from "$lib/Modules/FileManager";
 	import { currentUser, pb } from "$lib/Pocketbase";
 	import { toast } from "$lib/Toast";
@@ -18,15 +19,20 @@
                 const comment = await UserClass.posts.createComment({
                     content: content,
                     user: $currentUser.id,
-                    original_post: originalPostData.id,
-                    original_post_id: originalPostData.id,
-                    created_at: new Date().toISOString(),
                     image: null,
+                    created_at: new Date().toISOString(),
+                    likes_amount: 0,
+                    replies_amount: 0,
+                    reposts_amount: 0,
+                    content_type: 'comment',
+                    original_post: originalPostData.id
                 })
                 if(comment) {
                     closeFunction();
                     content = '';
                     toast(`Successfully replied to post!`);
+                    goto(`/${$currentUser?.handle}/${comment.id}`);
+                    window.location.reload();
                 } else {
                     toast(`Failed to reply to post!`);
                 }

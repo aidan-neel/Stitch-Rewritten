@@ -42,6 +42,7 @@
                 postCreation.set(false);
                 content = '';
                 toast('Successfully created post!');
+                window.location.reload();
             } else {
                 toast('Failed to create post!');
             }

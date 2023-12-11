@@ -66,19 +66,19 @@ export function timeAgo(timestamp) {
   const years = Math.floor(days / 365);
 
   if (years > 0) {
-    return years + 'yr ago';
+    return years + 'yr';
   } else if (months > 0) {
-    return months + 'mo ago';
+    return months + 'mo';
   } else if (weeks > 0) {
-    return weeks + 'w ago';
+    return weeks + 'w';
   } else if (days > 0) {
-    return days + 'd ago';
+    return days + 'd';
   } else if (hours > 0) {
-    return hours + 'h ago';
+    return hours + 'h';
   } else if (minutes > 0) {
-    return minutes + 'm ago';
+    return minutes + 'm';
   } else if (seconds > 0) {
-    return seconds + 's ago';
+    return seconds + 's';
   } else {
     return 'now';
   }

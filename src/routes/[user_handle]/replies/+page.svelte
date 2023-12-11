@@ -52,12 +52,14 @@
                 
                 user_data = user.items[0];
 
-                const posts = await pb.collection('posts').getList(1, 20, {
+                const posts = await pb.collection('comments').getList(1, 20, {
                     filter: `user.id = "${user.items[0].id}"`,
-                    sort: '-created_at',
-                    expand: 'user'
+                    sort: '-created',
+                    expand: 'user, original_post'
                 });
-                console.log(posts);
+
+                console.log(posts.items.length);
+
                 if (posts.items.length === 0) {
                     noPosts = true;
                 } else {
@@ -167,10 +169,10 @@
             </section>
 
             <div class="w-full border-b border-b-white/10 mt-8 flex flex-row items-center justify-center">
-                <a href={`/${user_data.handle}`} class="font-semibold text-white pb-4 border-b border-b-white w-full">
+                <a href={`/${user_data.handle}`} class="text-white/50 pb-4 w-full">
                     Posts
                 </a>
-                <a href={`/${user_data.handle}/replies`} class="text-white/50 pb-4 w-full">
+                <a href={`/${user_data.handle}/replies`} class="font-semibold text-white pb-4 border-b border-b-white w-full">
                     Replies
                 </a>
                 <!-- Later implementation 
@@ -188,11 +190,11 @@
                 {/each}
             {:else if noPosts}
                 <p class="mt-12 font-medium">
-                    This user has no posts.
+                    This user has no replies.
                 </p>
             {:else}
                 {#each user_posts as post}
-                    <Post PostData={post} additionalClasses="pt-2 pb-6 w-screen md:w-[90vw] lg:w-[38.5rem] xl:w-[47.5rem]" />
+                    <Post postIsReply={true} originalPostData={post.expand?.original_post} PostData={post} additionalClasses="pt-2 pb-6 w-screen md:w-[90vw] lg:w-[38.5rem] xl:w-[47.5rem]" />
                 {/each}
             {/if}
         </div>

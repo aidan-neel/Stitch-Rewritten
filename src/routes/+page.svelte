@@ -25,7 +25,8 @@
         try {
             const records = await pb.collection('posts').getList(1, 50, {
                 sort: '-created_at',
-                expand: 'user'
+                expand: 'user',
+                filter: 'content_type = "post"'
             });
 
             posts = [...posts, ...records.items];
@@ -107,7 +108,7 @@
     <div class="w-full overflow-y-auto fadeUp fadeUpFast gap-6 grid overflow-x-hidden hide-scrollbar items-center justify-center">
         <PostInput user={$currentUser} />
         {#each posts as post}
-            <Post PostData={post} additionalClasses="pb-6 w-screen md:w-[92vw] lg:w-[58.5rem] xl:w-[47.5rem]" />
+            <Post PostData={post} additionalClasses="pb-6 w-screen md:w-[90vw] lg:w-[38.5rem] xl:w-[47.5rem]" />
         {/each}
     </div>
 </div>
