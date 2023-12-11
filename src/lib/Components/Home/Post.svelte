@@ -235,7 +235,7 @@
                 </span>
             </div>
             <p class='mt-1 w-[75%] md:w-full dark:text-white text-black text-left whitespace-pre-wrap break-words'>
-                {@html originalPostDatas.content} ORIGINAL POST
+                {@html originalPostDatas.content}
             </p>
             <div class="w-full flex items-center justify-start mt-2 gap-4">
                 {#if userLikesPost}
@@ -306,7 +306,7 @@
             </div>
         </div>
         <p class='mt-2 w-[75%] md:w-full dark:text-white text-black text-left whitespace-pre-wrap break-words'>
-            {@html PostData.content} REPLY {PostData.id}
+            {@html PostData.content}
         </p>
         <div class="flex flex-row gap-4 mt-2">
             {#if userLikesPost}
