@@ -5,10 +5,12 @@
     import { currentUser, pb } from "$lib/Pocketbase";
     import Icon from "@iconify/svelte";
     import { onDestroy, onMount } from "svelte";
+    import { fade } from "svelte/transition";
 
     let posts = []
     let loading = true;
 
+    let disclaimer = true;
     let page = 1;
     let isFetching = false;
     let allPostsLoaded = false;
@@ -95,6 +97,30 @@
 
 {#if loading === true}
     <Loading />
+{/if}
+
+{#if disclaimer}
+    <div class="h-screen w-screen flex items-center justify-center  backdrop-blur-[6px] bg-black/20 absolute z-40">
+        <div transition:fade="{{ delay: 0, duration: 250}}" class="w-[32rem] bg-main border border-white/10 rounded-xl flex items-start justify-start flex-col p-5">
+            <p class="text-sm mb-1">
+                Stitch <span class="font-mono text-xs text-white/70 font-normal">Beta</span>
+            </p>
+            <h1 class="text-3xl font-semibold">
+                Warning!
+            </h1>
+            <p class="text-left text-white/90 mt-1">
+                Stitch is in a beta phase, which means bugs and issues are guaranteed to be present.
+                Please report any issues you find to the developer. Not all features are implemented, 
+                and some are bugged and don't work as intended. I have slowly been working on this project
+                and will continue to do so. Thank you for your patience.
+            </p>
+            <button on:click={() => {
+                disclaimer = false
+            }} class="bg-white w-32 duration-100 hover:bg-white/80 py-1 text-black/90 mt-4 rounded-md font-medium">
+                Close
+            </button>
+        </div>
+    </div>
 {/if}
 
 <div class="border-l border-l-white/10 h-screen w-[28rem] xl:flex hidden px-8 items-start justify-center pt-6">
