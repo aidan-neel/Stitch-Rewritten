@@ -13,4 +13,6 @@ Welcome to Stitch, a cutting-edge social media platform that combines the best a
 - **Enhanced Integrations**: Seamlessly integrate with a variety of services and platforms for a richer experience.
 - **User-Friendly Interface**: Enjoy an intuitive and aesthetically pleasing user experience.
 
-https://stitch.aidan-neel.com/
+A rework of Stitch's core components and interface is planned
+
+https://stitch-social.com
